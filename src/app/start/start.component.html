@@ -1,0 +1,6 @@
+<div id="skeletonContainer" *ngIf="posts.length == 0">
+    <p-skeleton *ngFor="let height of skeletonHeights" height="{{height + 'rem'}}" width="100%"></p-skeleton>
+</div>
+<div id="postContainer">
+    <div *ngFor="let post of posts" class="post">{{ post }}</div>
+</div>

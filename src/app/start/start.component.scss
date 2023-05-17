@@ -1,0 +1,25 @@
+#postContainer,
+#skeletonContainer {
+    margin-top: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#postContainer {
+    .post {
+        width: 40%;
+        border: 1px solid var(--surface-border);
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+#skeletonContainer {
+    
+    p-skeleton {
+        width: 40%;
+        margin-bottom: 1rem;
+    }
+}

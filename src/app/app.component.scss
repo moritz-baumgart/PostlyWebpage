@@ -1,0 +1,33 @@
+
+header {
+    display: flex;
+    justify-content: space-between;
+    
+    position: sticky;
+    top: 0;
+
+    background-color: var(--surface-card);
+
+    padding: 0.75rem;
+
+    #headerStart {
+        width: 10%;
+    }
+
+    #headerMid {
+        width: 60%;
+    }
+
+    #headerEnd {
+        max-width:  20%;
+    }
+
+    .header-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .btn-margin {
+        margin-right: 1.5rem;
+    }
+}
