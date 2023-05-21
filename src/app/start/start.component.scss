@@ -1,3 +1,9 @@
+:host {
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+}
+
 #postContainer,
 #skeletonContainer {
     margin-top: 1rem;
@@ -9,17 +15,74 @@
 
 #postContainer {
     .post {
-        width: 40%;
+        width: 100%;
         border: 1px solid var(--surface-border);
-        padding: 1rem;
         margin-bottom: 1rem;
+        background-color: var(--surface-card);
+
+        display: flex;
+        flex-direction: column;
+
+        .post-contents {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+
+            .username {
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
+
+            .post-time {
+                padding-bottom: 0.8rem;
+            }
+        }
+
+        .post-stats {
+            padding: 1rem;
+            border-top: 1px solid var(--surface-border);
+
+            display: flex;
+
+            .post-stat {
+                margin-right: 1rem;
+            }
+        }
     }
 }
 
 #skeletonContainer {
-    
     p-skeleton {
-        width: 40%;
+        width: 100%;
         margin-bottom: 1rem;
+    }
+
+    opacity: 0;
+    animation-name: appear; // Make the skeletons appear after 1s, this ensures no flickering when the posts load fast but gives the user some visual when they have to wait longer.
+    animation-duration: 500ms;
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes appear {
+    to {
+        opacity: 1;
+    }
+}
+
+#startTabs {
+    display: block;
+    width: 40%;
+
+    ::ng-deep {
+        .p-tabview-panels,
+        .p-tabview-nav-link {
+            background-color: transparent;
+        }
+
+        .p-tabview-nav {
+            display: flex;
+            justify-content: center;
+        }
     }
 }
