@@ -19,6 +19,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { PasswordModule } from 'primeng/password';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { ToastModule } from 'primeng/toast';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -57,7 +58,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     SkeletonModule,
     TabViewModule,
     PasswordModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    ToastModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

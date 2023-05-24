@@ -2,12 +2,14 @@ import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { AccountService } from '../account.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { EMPTY, catchError, of } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+  providers: [MessageService]
 })
 export class LoginComponent {
 
@@ -16,7 +18,7 @@ export class LoginComponent {
 
   loading = false
 
-  constructor(private accountService: AccountService, private activatedRoute: ActivatedRoute, private router: Router) { }
+  constructor(private accountService: AccountService, private activatedRoute: ActivatedRoute, private router: Router, private messageService: MessageService) { }
 
   login() {
 
@@ -36,16 +38,19 @@ export class LoginComponent {
     }
 
     // Set the loading state of the button
-    this.loading = true
-    this.username.disable()
-    this.password.disable()
+    this.setLoading(true)
 
     // Initiate login
     this.accountService.login(usernameVal, passwordVal)
       .pipe(
-        catchError((err) => {
-          // TODO: Handle error
-          return of()
+        catchError((_) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occured while connecting to the server, please try again later!'
+          })
+          this.setLoading(false)
+          return EMPTY
         })
       )
       .subscribe((res) => {
@@ -76,11 +81,23 @@ export class LoginComponent {
           })
         } else {
           // Login gone wrong, tell user
-          // TODO:
-          this.loading = false
-          this.username.enable()
-          this.password.enable()
+          this.messageService.add({
+            severity: 'warn',
+            detail: 'Username or password wrong, please try again!'
+          })
+          this.setLoading(false)
         }
       })
+  }
+
+  private setLoading(isLoading: boolean) {
+    this.loading = isLoading
+    if(isLoading) {
+      this.username.disable()
+      this.password.disable()
+    } else {
+      this.username.enable()
+      this.password.enable()
+    }
   }
 }
