@@ -1,0 +1,5 @@
+<div id="loginContainer">
+    <input pInputText placeholder="Username" class="input" [formControl]="username" (keyup.enter)="login()"/>
+    <p-password [toggleMask]="true" placeholder="Password" class="input-margin input" [feedback]="false" [formControl]="password" (keyup.enter)="login()"></p-password>
+    <button pButton label="Login" class="input-margin input" (click)="login()" [disabled]="!username.valid || !password.valid" [loading]="loading"></button>
+</div>

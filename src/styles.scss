@@ -7,3 +7,14 @@ body {
     margin: 0;
     background-color: var(--surface-ground);
 }
+
+// Make the skeletons appear after 600ms, this ensures no flickering when the posts load fast but gives the user some visual when they have to wait longer.
+p-skeleton {
+    opacity: 0;
+    animation: appear 500ms 600ms forwards;
+    @keyframes appear {
+        to {
+            opacity: 1;
+        }
+    }
+}

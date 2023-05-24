@@ -1,16 +1,25 @@
-<header>
+<header *ngIf="currentRoute != '/login' && currentRoute != '/register'">
   <div id="headerStart" class="header-inner">
     <div style="outline: solid red 1px;">LOGO</div>
   </div>
   <div id="headerMid" class="header-inner">
     <span class="p-input-icon-left" style="width: 100%;">
       <i class="pi pi-search"></i>
-      <input type="text" pInputText placeholder="Search" style="width: 100%;" class="p-inputtext-sm"/>
+      <input type="text" pInputText placeholder="Search" style="width: 100%;" class="p-inputtext-sm" />
     </span>
   </div>
   <div id="headerEnd" class="header-inner">
-    <p-button label="Login" class="btn-margin" styleClass="p-button-sm"></p-button>
-    <p-button label="Register" styleClass="p-button-sm"></p-button>
+    <ng-container *ngIf="loggedIn != undefined && !loggedIn">
+      <p-button label="Login" class="btn-margin" styleClass="p-button-sm" routerLink="login"></p-button>
+      <p-button label="Register" styleClass="p-button-sm" routerLink="register"></p-button>
+    </ng-container>
+    <ng-container *ngIf="loggedIn != undefined && loggedIn">
+      <!--TODO: Add proper content here: -->
+      YOU'RE LOGGED IN
+    </ng-container>
+    <ng-container *ngIf="loggedIn == undefined">
+      <p-skeleton class="skeleton-appear" height="100%" width="15rem"></p-skeleton>
+    </ng-container>
   </div>
 </header>
 

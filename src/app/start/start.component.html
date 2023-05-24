@@ -1,7 +1,7 @@
 <p-tabView id="startTabs">
     <p-tabPanel header="Recommended">
         <div id="skeletonContainer" *ngIf="posts.length == 0">
-            <p-skeleton *ngFor="let height of skeletonHeights" height="{{height + 'rem'}}" width="100%"></p-skeleton>
+            <p-skeleton *ngFor="let height of skeletonHeights" class="skeleton-appear" height="{{height + 'rem'}}" width="100%"></p-skeleton>
         </div>
         <div id="postContainer" class="post">
             <div *ngFor="let post of posts" class="post">
@@ -13,15 +13,18 @@
                 </div>
                 <div class="post-stats">
                     <div class="post-stat">
-                        <i class="pi pi-thumbs-up"></i>
+                        <i class="pi pi-thumbs-up-fill hover-twist" *ngIf="post.vote == VoteInteractionType.Upvote"></i>
+                        <i class="pi pi-thumbs-up hover-twist" *ngIf="post.vote != VoteInteractionType.Upvote"></i>
                         {{ post.upvoteCount }}
                     </div>
                     <div class="post-stat">
-                        <i class="pi pi-thumbs-down"></i>
+                        <i class="pi pi-thumbs-down-fill hover-twist" *ngIf="post.vote == VoteInteractionType.Downvote"></i>
+                        <i class="pi pi-thumbs-down hover-twist" *ngIf="post.vote != VoteInteractionType.Downvote"></i>
                         {{ post.downvoteCount }}
                     </div>
                     <div class="post-stat">
-                        <i class="pi pi-comment"></i>
+                        <i class="pi pi-comments hover-twist" *ngIf="post.hasCommented"></i>
+                        <i class="pi pi-comment hover-twist" *ngIf="!post.hasCommented"></i>
                         {{ post.commentCount }}
                     </div>
                 </div>

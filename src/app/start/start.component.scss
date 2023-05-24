@@ -51,23 +51,13 @@
     }
 }
 
-#skeletonContainer {
-    p-skeleton {
-        width: 100%;
-        margin-bottom: 1rem;
-    }
-
-    opacity: 0;
-    animation-name: appear; // Make the skeletons appear after 1s, this ensures no flickering when the posts load fast but gives the user some visual when they have to wait longer.
-    animation-duration: 500ms;
-    animation-delay: 1s;
-    animation-fill-mode: forwards;
+.hover-twist {
+    transform: scale(1);
+    transition: transform 300ms;
 }
 
-@keyframes appear {
-    to {
-        opacity: 1;
-    }
+.hover-twist:hover {
+    transform: scale(1.2);
 }
 
 #startTabs {

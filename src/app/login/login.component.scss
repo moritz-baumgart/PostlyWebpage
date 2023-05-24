@@ -1,0 +1,32 @@
+:host {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#loginContainer {
+    width: 95%;
+    max-width: 25rem;
+    margin-bottom: 25vh;
+
+    .input,
+    ::ng-deep .p-password-input, // I sometimes really hate primeng
+    ::ng-deep .p-password {
+        width: 100%;
+        &.input-margin {
+            margin-top: 2rem;
+        }
+    }
+
+    ::ng-deep .p-password {
+        margin-top: 2rem;
+    }
+
+    ::ng-deep .p-button {
+        width: 100%;
+    }
+}
