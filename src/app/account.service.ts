@@ -47,6 +47,13 @@ export class AccountService {
   }
 
   /**
+   * Logs the user out.
+   */
+  logout() {
+    this.cookie.delete('jwt')
+  }
+
+  /**
    * This method queries the status endpoint and updates the loggedIn subject based on the response
    */
   refreshLoginStatus() {

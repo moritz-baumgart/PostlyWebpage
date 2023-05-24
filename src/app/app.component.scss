@@ -1,8 +1,7 @@
-
 header {
     display: flex;
     justify-content: space-between;
-    
+
     position: sticky;
     top: 0;
 
@@ -12,6 +11,8 @@ header {
 
     #headerStart {
         width: 10%;
+        display: flex;
+        justify-content: flex-start;
     }
 
     #headerMid {
@@ -19,15 +20,39 @@ header {
     }
 
     #headerEnd {
-        max-width:  20%;
-    }
-
-    .header-inner {
+        width: 20%;
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
     }
 
     .btn-margin {
         margin-right: 1.5rem;
+    }
+
+    .avatar {
+        height: 100%;
+        aspect-ratio: 1;
+
+        background-color: #3e4053;
+
+        border-radius: 13%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+}
+
+.user-overlay-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .op-margin-bottom {
+        margin-bottom: 1rem;
     }
 }

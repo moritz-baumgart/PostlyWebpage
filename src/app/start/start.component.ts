@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ContentService } from '../content.service';
 import { PostDTO } from 'src/DTOs/postdto';
 import { VoteInteractionType } from 'src/DTOs/voteinteractiontype';
-import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-start',

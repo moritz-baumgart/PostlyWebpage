@@ -51,6 +51,13 @@
     }
 }
 
+#skeletonContainer {
+    p-skeleton {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
+
 .hover-twist {
     transform: scale(1);
     transition: transform 300ms;

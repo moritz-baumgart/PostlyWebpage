@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { AccountService } from './account.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { ClaimTypes } from 'src/DTOs/claimtypes';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +15,9 @@ export class AppComponent {
 
   currentRoute = ''
   loggedIn: boolean | undefined
+  username = ''
 
-  constructor(router: Router, accountService: AccountService) {
+  constructor(private router: Router, private accountService: AccountService, jwtHelper: JwtHelperService) {
 
     // Listen to router events so we can see the current route inside the component.
     // This little hack is used so we can easily disable the title bar inside e.g. the login or register page, since they are the only pages that dont need them.
@@ -33,6 +36,15 @@ export class AppComponent {
     accountService.isLoggedIn()
       .subscribe((res) => {
         this.loggedIn = res
+        if (this.loggedIn) {
+          this.username = jwtHelper.decodeToken()[ClaimTypes.nameIdentifier]
+        }
       })
+  }
+
+  logout() {
+    this.accountService.logout()
+    this.router.navigate(['/'])
+    window.location.reload()
   }
 }

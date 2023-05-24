@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { JWT_OPTIONS, JwtModule } from '@auth0/angular-jwt';
 import { CookieService } from 'ngx-cookie-service';
+import { environment } from 'src/environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,7 +18,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { PasswordModule } from 'primeng/password';
-import { environment } from 'src/environments/environment';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -55,7 +56,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     InputTextModule,
     SkeletonModule,
     TabViewModule,
-    PasswordModule
+    PasswordModule,
+    OverlayPanelModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
