@@ -20,6 +20,7 @@ import { RegisterComponent } from './register/register.component';
 import { PasswordModule } from 'primeng/password';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ToastModule } from 'primeng/toast';
+import { DividerModule } from 'primeng/divider';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -59,7 +60,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     TabViewModule,
     PasswordModule,
     OverlayPanelModule,
-    ToastModule
+    ToastModule,
+    DividerModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

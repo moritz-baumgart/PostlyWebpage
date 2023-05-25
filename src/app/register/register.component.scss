@@ -1,0 +1,55 @@
+:host {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#registerContainer,
+#continueContainer {
+    width: 95%;
+    max-width: 25rem;
+    margin-bottom: 20vh;
+}
+
+#registerContainer {
+    .input,
+    ::ng-deep .p-password-input, // I sometimes really hate primeng
+    ::ng-deep .p-password {
+        width: 100%;
+    }
+
+    ::ng-deep .p-password {
+        margin-top: 2rem;
+    }
+
+    ::ng-deep .p-button {
+        width: 100%;
+    }
+}
+
+.input-margin {
+    margin-top: 2rem;
+}
+
+#continueContainer {
+    #messageContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        span {
+            font-size: 2rem;
+            font-family: var(--font-family);
+        }
+    }
+
+    #continueButtons {
+        width: 100%;
+
+        display: flex;
+        justify-content: space-around;
+    }
+}

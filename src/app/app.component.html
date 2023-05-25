@@ -10,8 +10,8 @@
   </div>
   <div id="headerEnd" class="header-inner">
     <ng-container *ngIf="loggedIn != undefined && !loggedIn">
-      <p-button label="Login" class="btn-margin" styleClass="p-button-sm" routerLink="login"></p-button>
-      <p-button label="Register" styleClass="p-button-sm" routerLink="register"></p-button>
+      <p-button label="Login" class="btn-margin" styleClass="p-button-sm" routerLink="/login"></p-button>
+      <p-button label="Register" styleClass="p-button-sm" routerLink="/register"></p-button>
     </ng-container>
     <ng-container *ngIf="loggedIn != undefined && loggedIn">
       <p-button label="Create post" class="btn-margin" styleClass="p-button-sm"></p-button>

@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable, ReplaySubject, catchError, map, of, tap } from 'rxjs';
+import { RegisterError } from 'src/DTOs/registererror';
 import { SuccessResult } from 'src/DTOs/successresult';
 import { environment } from 'src/environments/environment';
 
@@ -27,23 +28,25 @@ export class AccountService {
    * @param password 
    * @returns An Observable that resolves to a boolean value of true if the login was successful, false otherwise.
    */
-  login(username: string, password: string): Observable<boolean> {
+  login(username: string, password: string) {
 
-    return this.http.post<SuccessResult<string, object>>(this.apiBase + '/account/login', JSON.stringify({
-      username,
-      password
-    }), {
-      headers: this.jsonHeaders
-    }).pipe(
-      map((res) => {
-        if (res.success && res.result != null) {
-          this.cookie.set('jwt', res.result)
-          this.refreshLoginStatus()
-          return true
-        }
-        return false
-      })
-    )
+    return this.http.post<SuccessResult<string, object>>(this.apiBase + '/account/login',
+      JSON.stringify({
+        username,
+        password
+      }),
+      {
+        headers: this.jsonHeaders
+      }).pipe(
+        map((res) => {
+          if (res.success && res.result != null) {
+            this.cookie.set('jwt', res.result)
+            this.refreshLoginStatus()
+            return true
+          }
+          return false
+        })
+      )
   }
 
   /**
@@ -51,6 +54,17 @@ export class AccountService {
    */
   logout() {
     this.cookie.delete('jwt')
+  }
+
+  register(username: string, password: string) {
+    return this.http.post<SuccessResult<object, RegisterError>>(this.apiBase + '/account/register',
+      JSON.stringify({
+        username,
+        password
+      }),
+      {
+        headers: this.jsonHeaders
+      })
   }
 
   /**

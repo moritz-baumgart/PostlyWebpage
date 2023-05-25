@@ -1,1 +1,17 @@
-<p>register works!</p>
+<div id="registerContainer" *ngIf="step == 0">
+    <input pInputText placeholder="Pick a username" class="input" [formControl]="username" (keyup.enter)="register()"/>
+    <p-password [toggleMask]="true" placeholder="Pick a password" class="input-margin input" [formControl]="password" (keyup.enter)="register()"></p-password>
+    <p-password [toggleMask]="true" placeholder="Repeat password" class="input-margin input" [feedback]="false" [formControl]="passwordRepeat" (keyup.enter)="register()"></p-password>
+    <button pButton label="Register" class="input-margin input" (click)="register()" [disabled]="!username.valid || !password.valid || !passwordRepeat.valid" [loading]="loading"></button>
+    <p-toast position="top-center"/>
+</div>
+<div id="continueContainer" *ngIf="step == 1">
+    <div id="messageContainer">
+        <span>Registration successful!</span>
+        <span class="input-margin">You can now log in.</span>
+    </div>
+    <div id="continueButtons" class="input-margin">
+        <button pButton label="Back to start" class="p-button-secondary p-button-outlined" routerLink="/"></button>
+        <p-button label="Login" routerLink="/login"></p-button>
+    </div>
+</div>
