@@ -5,12 +5,15 @@ import { VoteInteractionType } from 'src/DTOs/voteinteractiontype';
 import { DatePipe } from '@angular/common';
 import { EMPTY, catchError } from 'rxjs';
 import { CommentDTO } from 'src/DTOs/commentdto';
+import { AccountService } from '../account.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-start',
   templateUrl: './start.component.html',
   styleUrls: ['./start.component.scss'],
-  providers: [DatePipe]
+  providers: [DatePipe, ConfirmationService, MessageService]
 })
 export class StartComponent {
 
@@ -23,14 +26,21 @@ export class StartComponent {
 
   postDetailsVisible = false
   postDetails: PostDetails | undefined
-  commentText = ''
+  commentText = new FormControl('', Validators.maxLength(282))
+  savedCommentTexts: { [key: number]: string } = {}
 
   Array = Array
 
-  constructor(private contentService: ContentService, private datePipe: DatePipe) {
+  constructor(private contentService: ContentService, private datePipe: DatePipe, accountService: AccountService, private confirmationService: ConfirmationService, private messageService: MessageService) {
 
     // Randomly shuffles the skeletonHeights array to give the skeletons a random "order"
     this.skeletonHeights = this.skeletonHeights.sort(() => Math.random() - 0.5)
+
+    // Subscribe to login status
+    accountService.isLoggedIn()
+      .subscribe((res) => {
+        this.loggedIn = res
+      })
 
     // Fetch the latest public feed
     contentService.getPublicFeed().subscribe((data) => {
@@ -40,20 +50,90 @@ export class StartComponent {
 
   showPostDetails(post: PostDTO) {
     this.postDetails = new PostDetails(post, this.datePipe)
+    this.commentText.setValue(this.savedCommentTexts[post.id])
     this.postDetailsVisible = true
+    this.loadComments(post.id)
+  }
 
-    this.contentService.getCommentsForPost(post.id)
+  private loadComments(postId: number) {
+    this.contentService.getCommentsForPost(postId)
       .pipe(
         catchError((err) => {
-          // TODO: Handle err
+          this.showGeneralError('An error occured while loading the comments, please try again later!')
           return EMPTY
         })
       ).subscribe((res) => {
         if (this.postDetails) {
           this.postDetails.comments = res
-          console.log(res);
         }
       })
+  }
+
+  /**
+   * This method is called when the dialog closes, it temporarily saves started comments for the post so the user can continue writing it later.
+   */
+  postDetailsHide() {
+    if (this.postDetails) {
+      this.savedCommentTexts[this.postDetails.post.id] = this.commentText.value ?? ''
+    }
+  }
+
+  /**
+   * Called by the discard button, opens a confirm and if the user clicks yes it clears the comment input
+   */
+  discard(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target!,
+      message: 'Do you really want to discard your comment?',
+      icon: 'pi pi-question',
+      accept: () => {
+        this.commentText.setValue('')
+      }
+    })
+  }
+
+  /**
+   * Called by the comment button, submits the comment
+   */
+  comment() {
+    if (!this.postDetails) {
+      return
+    }
+
+    if (!this.commentText.valid) {
+      return
+    }
+
+    let commentTextVal = this.commentText.value
+    if (!commentTextVal) {
+      return
+    }
+
+    this.contentService.createComment(this.postDetails.post.id, commentTextVal)
+      .pipe(
+        catchError((err) => {
+          this.showGeneralError('An error occured while adding your comment, please try again later!')
+          return EMPTY
+        })
+      )
+      .subscribe((res) => {
+        if (res.success) {
+          this.commentText.setValue('')
+          if (this.postDetails) {
+            this.loadComments(this.postDetails.post.id)
+          }
+        } else {
+          this.showGeneralError('An error occured while adding your comment, please try again later!')
+        }
+      })
+  }
+
+  private showGeneralError(message: string) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: message
+    })
   }
 }
 

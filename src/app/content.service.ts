@@ -1,7 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CommentDTO } from 'src/DTOs/commentdto';
+import { InteractionError } from 'src/DTOs/interactionerror';
 import { PostDTO } from 'src/DTOs/postdto';
+import { SuccessResult } from 'src/DTOs/successresult';
 import { environment } from 'src/environments/environment';
 
 /**
@@ -13,6 +15,9 @@ import { environment } from 'src/environments/environment';
 export class ContentService {
 
   private apiBase = environment.apiBase
+  readonly jsonHeaders = new HttpHeaders({
+    'Content-Type': 'application/json'
+  })
 
   constructor(private http: HttpClient) { }
 
@@ -37,12 +42,23 @@ export class ContentService {
   }
 
   getCommentsForPost(postId: number) {
-    console.log(postId);
-
     return this.http.get<CommentDTO[]>(this.apiBase + '/post/comments', {
       params: {
         postId
       }
     })
+  }
+
+  createComment(postId: number, commentContent: string) {
+    return this.http.post<SuccessResult<any, InteractionError>>(
+      this.apiBase + '/interaction/comment',
+      JSON.stringify({
+        postId,
+        commentContent
+      }),
+      {
+        headers: this.jsonHeaders
+      }
+    )
   }
 }

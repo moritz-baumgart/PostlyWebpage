@@ -23,7 +23,7 @@
     </p-tabPanel>
 
     <!-- below is the overlay dialog for a detailed view of posts, it contains the abilitiy to comment, etc. -->
-    <p-dialog [header]="postDetails?.header || ''" [(visible)]="postDetailsVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" id="postDetailsDialog">
+    <p-dialog [header]="postDetails?.header || ''" [(visible)]="postDetailsVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" id="postDetailsDialog" (onHide)="postDetailsHide()" [maximizable]="true">
         <span>{{ postDetails?.content }}</span>
         <app-poststats [post]="postDetails?.post" [paddingLeft]="'0'" [paddingBottom]="'0'"></app-poststats>
         <p-divider></p-divider>
@@ -39,15 +39,18 @@
                 <span>{{ comment.content }}</span>
                 <p-divider></p-divider>
             </ng-container>
-            <span class="p-float-label" id="commentArea">
-                <textarea rows="5" pInputTextarea [(ngModel)]="commentText"></textarea>
-                <label for="float-input">Leave a comment...</label>
-            </span>
-            <div id="commentButtonContainer">
-                <!-- TODO: CONTINUE HERE, add function to these btns. Then add the ability to upvote downvote, when closing the dialog the comment should be temporary saved by post id or smth -->
-                <p-button label="Discard" class="comment-btn-margin" styleClass="p-button-sm p-button-danger p-button-outlined"></p-button>
-                <p-button label="Post" class="comment-btn-margin" styleClass="p-button-sm p-button-success "></p-button>
-            </div>
+            <section *ngIf="loggedIn">
+                <span class="p-float-label" id="commentArea">
+                    <textarea rows="5" pInputTextarea [formControl]="commentText"></textarea>
+                    <label for="float-input">Leave a comment...</label>
+                </span>
+                <div id="commentButtonContainer">
+                    <span class="comment-btn-margin" [style.color]="!commentText.valid ? 'var(--red-500)' : ''">{{ commentText.value?.length ?? 0 }}/282</span>
+                    <p-button label="Discard" class="comment-btn-margin" styleClass="p-button-sm p-button-danger p-button-outlined" (click)="discard($event)"></p-button>
+                    <p-button label="Comment" class="comment-btn-margin" styleClass="p-button-sm p-button-success" [disabled]="!commentText.valid || commentText.value == undefined || commentText.value.length == 0" (click)="comment()"></p-button>
+                </div>
+            </section>
+            <span *ngIf="!loggedIn">Log in to be able to write comments!</span>
         </ng-container>
         <ng-container *ngIf="postDetails?.comments == null">
             <div id="commentSkeletonContainer" *ngFor="let _ of Array(4).fill(0)">
@@ -57,4 +60,7 @@
         </ng-container>
     </p-dialog>
 
+    <!-- p-confirmPopup and p-toast for mounting confirm and toast overlays -->
+    <p-confirmPopup></p-confirmPopup>
+    <p-toast></p-toast>
 </p-tabView>

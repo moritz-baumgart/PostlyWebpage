@@ -24,6 +24,7 @@ import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -67,7 +68,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     ToastModule,
     DividerModule,
     DialogModule,
-    InputTextareaModule
+    InputTextareaModule,
+    ConfirmPopupModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
