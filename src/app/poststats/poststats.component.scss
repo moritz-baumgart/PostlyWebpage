@@ -1,0 +1,15 @@
+.post-stats {
+    display: flex;
+    .post-stat {
+        margin-right: 1rem;
+    }
+}
+
+.hover-scale {
+    transform: scale(1);
+    transition: transform 300ms;
+}
+
+.hover-scale:hover {
+    transform: scale(1.2);
+}

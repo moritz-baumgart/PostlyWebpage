@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CommentDTO } from 'src/DTOs/commentdto';
 import { PostDTO } from 'src/DTOs/postdto';
 import { environment } from 'src/environments/environment';
 
@@ -33,5 +34,15 @@ export class ContentService {
       .get<PostDTO[]>(this.apiBase + '/feed/public', {
         params
       })
+  }
+
+  getCommentsForPost(postId: number) {
+    console.log(postId);
+
+    return this.http.get<CommentDTO[]>(this.apiBase + '/post/comments', {
+      params: {
+        postId
+      }
+    })
   }
 }

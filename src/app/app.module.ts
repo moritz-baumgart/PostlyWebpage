@@ -9,18 +9,21 @@ import { environment } from 'src/environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { StartComponent } from './start/start.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { PoststatsComponent } from './poststats/poststats.component';
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { StartComponent } from './start/start.component';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabViewModule } from 'primeng/tabview';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
 import { PasswordModule } from 'primeng/password';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -38,7 +41,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     AppComponent,
     StartComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    PoststatsComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +65,9 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     PasswordModule,
     OverlayPanelModule,
     ToastModule,
-    DividerModule
+    DividerModule,
+    DialogModule,
+    InputTextareaModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
