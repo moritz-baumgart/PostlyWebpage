@@ -4,6 +4,8 @@ import { AccountService } from '../account.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EMPTY, catchError, of } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Error } from 'src/DTOs/error';
 
 @Component({
   selector: 'app-login',
@@ -43,56 +45,56 @@ export class LoginComponent {
     // Initiate login
     this.accountService.login(usernameVal, passwordVal)
       .pipe(
-        catchError((_) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An error occured while connecting to the server, please try again later!'
-          })
-          this.setLoading(false)
+        catchError((err: HttpErrorResponse) => {
+          if (err.error == Error.PasswordIncorrect || err.error == Error.UserNotFound) {
+            // Login gone wrong, tell user
+            this.messageService.add({
+              severity: 'warn',
+              detail: 'Username or password wrong, please try again!'
+            })
+            this.setLoading(false)
+          } else {
+            console.error(err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occured while connecting to the server, please try again later!'
+            })
+            this.setLoading(false)
+          }
+
           return EMPTY
         })
       )
       .subscribe((res) => {
+        // If the login was successful, proceed
+        // Get query parameters
+        this.activatedRoute.queryParams.subscribe((params) => {
 
-        // If the login was successful, proceed, otherwise handle error
-        if (res) {
+          let ref = params['ref']
+          if (ref) {
 
-          // Get query parameters
-          this.activatedRoute.queryParams.subscribe((params) => {
-
-            let ref = params['ref']
-            if (ref) {
-
-              // If the ref param is given, try to navigate there, if that fails navigate to start
-              this.router.navigate([ref]).then((val) => {
-                if (!val) {
-                  this.router.navigate(['/'])
-                }
-              }).catch((_) => {
+            // If the ref param is given, try to navigate there, if that fails navigate to start
+            this.router.navigate([ref]).then((val) => {
+              if (!val) {
                 this.router.navigate(['/'])
-              })
-
-            } else {
-
-              // If no ref is given, navigate to start
+              }
+            }).catch((_) => {
               this.router.navigate(['/'])
-            }
-          })
-        } else {
-          // Login gone wrong, tell user
-          this.messageService.add({
-            severity: 'warn',
-            detail: 'Username or password wrong, please try again!'
-          })
-          this.setLoading(false)
-        }
+            })
+
+          } else {
+
+            // If no ref is given, navigate to start
+            this.router.navigate(['/'])
+          }
+        })
       })
   }
 
   private setLoading(isLoading: boolean) {
     this.loading = isLoading
-    if(isLoading) {
+    if (isLoading) {
       this.username.disable()
       this.password.disable()
     } else {

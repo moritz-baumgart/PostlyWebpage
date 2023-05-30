@@ -30,21 +30,18 @@ export class AccountService {
    */
   login(username: string, password: string) {
 
-    return this.http.post<SuccessResult<string, object>>(this.apiBase + '/account/login',
+    return this.http.post(this.apiBase + '/account/login',
       JSON.stringify({
         username,
         password
       }),
       {
-        headers: this.jsonHeaders
+        headers: this.jsonHeaders,
+        responseType: 'text'
       }).pipe(
-        map((res) => {
-          if (res.success && res.result != null) {
-            this.cookie.set('jwt', res.result)
-            this.refreshLoginStatus()
-            return true
-          }
-          return false
+        tap((res) => {
+          this.cookie.set('jwt', res)
+          this.refreshLoginStatus()
         })
       )
   }
