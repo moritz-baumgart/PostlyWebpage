@@ -124,13 +124,9 @@ export class StartComponent {
         })
       )
       .subscribe((res) => {
-        if (res.success) {
-          this.commentText.setValue('')
-          if (this.postDetails) {
-            this.loadComments(this.postDetails.post.id)
-          }
-        } else {
-          this.showGeneralError('An error occured while adding your comment, please try again later!')
+        this.commentText.setValue('')
+        if (this.postDetails) {
+          this.loadComments(this.postDetails.post.id)
         }
       })
   }
