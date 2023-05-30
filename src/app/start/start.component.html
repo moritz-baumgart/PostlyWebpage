@@ -16,6 +16,7 @@
                 </div>
                 <app-poststats [post]="post"></app-poststats>
             </div>
+            <p-button label="Load more" class="load-more-btn" styleClass="p-button-sm" (click)="loadNextPage()" [loading]="loadingNextPage"></p-button>
         </div>
     </p-tabPanel>
     <p-tabPanel header="Following">

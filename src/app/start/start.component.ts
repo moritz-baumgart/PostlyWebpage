@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ContentService } from '../content.service';
 import { PostDTO } from 'src/DTOs/postdto';
 import { VoteInteractionType } from 'src/DTOs/voteinteractiontype';
@@ -30,6 +30,9 @@ export class StartComponent {
   savedCommentTexts: { [key: number]: string } = {}
 
   Array = Array
+  pageNumber: number;
+  paginationStart: Date;
+  loadingNextPage = false
 
   constructor(private contentService: ContentService, private datePipe: DatePipe, accountService: AccountService, private confirmationService: ConfirmationService, private messageService: MessageService) {
 
@@ -43,7 +46,9 @@ export class StartComponent {
       })
 
     // Fetch the latest public feed
-    contentService.getPublicFeed().subscribe((data) => {
+    this.paginationStart = new Date()
+    this.pageNumber = 0
+    contentService.getPublicFeed(this.paginationStart, this.pageNumber).subscribe((data) => {
       this.posts = data
     })
   }
@@ -59,6 +64,7 @@ export class StartComponent {
     this.contentService.getCommentsForPost(postId)
       .pipe(
         catchError((err) => {
+          console.error(err);
           this.showGeneralError('An error occured while loading the comments, please try again later!')
           return EMPTY
         })
@@ -112,6 +118,7 @@ export class StartComponent {
     this.contentService.createComment(this.postDetails.post.id, commentTextVal)
       .pipe(
         catchError((err) => {
+          console.error(err);
           this.showGeneralError('An error occured while adding your comment, please try again later!')
           return EMPTY
         })
@@ -128,10 +135,30 @@ export class StartComponent {
       })
   }
 
-  private showGeneralError(message: string) {
+  loadNextPage() {
+    this.loadingNextPage = true
+    this.pageNumber++
+    this.contentService.getPublicFeed(this.paginationStart, this.pageNumber)
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          this.showGeneralError('An error occured while loading more posts, please try again later!')
+          return EMPTY
+        })
+      )
+      .subscribe((data) => {
+        if (data.length == 0) {
+          this.showGeneralError('No more posts available to load!', 'info', '')
+        }
+        this.posts.push(...data)
+        this.loadingNextPage = false
+      })
+  }
+
+  private showGeneralError(message: string, severity = 'error', summary = 'Error') {
     this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
+      severity,
+      summary,
       detail: message
     })
   }

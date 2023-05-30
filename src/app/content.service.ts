@@ -22,22 +22,14 @@ export class ContentService {
   constructor(private http: HttpClient) { }
 
 
-  getPublicFeed(from?: Date, to?: Date) {
-
-    let params: any = {}
-    if (from) {
-      params.from = from.toUTCString()
-    } else {
-      params.from = new Date(0).toUTCString()
-    }
-
-    if (to) {
-      params.to = to.toUTCString()
-    }
-
+  getPublicFeed(paginationStart: Date, pageNumber: number) {
+    
     return this.http
       .get<PostDTO[]>(this.apiBase + '/feed/public', {
-        params
+        params: {
+          "paginationStart": paginationStart.toISOString(),
+          pageNumber
+        }
       })
   }
 
