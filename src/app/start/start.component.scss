@@ -59,7 +59,8 @@
 
 #startTabs {
     display: block;
-    width: 40%;
+    width: 65rem;
+    max-width: 90%;
 
     ::ng-deep {
         .p-tabview-panels,

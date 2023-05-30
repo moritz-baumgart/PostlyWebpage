@@ -23,7 +23,7 @@ export class ContentService {
 
 
   getPublicFeed(paginationStart: Date, pageNumber: number) {
-    
+
     return this.http
       .get<PostDTO[]>(this.apiBase + '/feed/public', {
         params: {
@@ -34,11 +34,7 @@ export class ContentService {
   }
 
   getCommentsForPost(postId: number) {
-    return this.http.get<CommentDTO[]>(this.apiBase + '/post/comments', {
-      params: {
-        postId
-      }
-    })
+    return this.http.get<CommentDTO[]>(this.apiBase + '/post/' + postId + '/comments')
   }
 
   createComment(postId: number, commentContent: string) {
