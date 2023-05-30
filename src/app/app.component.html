@@ -14,7 +14,7 @@
       <p-button label="Register" styleClass="p-button-sm" routerLink="/register"></p-button>
     </ng-container>
     <ng-container *ngIf="loggedIn != undefined && loggedIn">
-      <p-button label="Create post" class="btn-margin" styleClass="p-button-sm"></p-button>
+      <p-button label="Create post" class="btn-margin" styleClass="p-button-sm" (click)="newPostDialogVisible = true"></p-button>
       <div class="avatar" (click)="userOverlayPanel.toggle($event)">
         <i class="pi pi-user"></i>
       </div>
@@ -31,4 +31,22 @@
   </div>
 </header>
 
+<!-- Below dialog is overlayed when the user creates a new post -->
+<p-dialog header="Create a new post" [(visible)]="newPostDialogVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" id="newPostDialog" [maximizable]="true">
+  <span class="p-float-label" id="newPostArea">
+    <textarea rows="5" pInputTextarea [formControl]="newPostText"></textarea>
+    <label for="float-input">Tell us, what's on your mind!</label>
+  </span>
+  <div id="postButtonContainer">
+      <span class="post-btn-margin" [style.color]="!newPostText.valid ? 'var(--red-500)' : ''">{{ newPostText.value?.length ?? 0 }}/282</span>
+      <p-button label="Discard" class="post-btn-margin" styleClass="p-button-sm p-button-danger p-button-outlined" (click)="discardPost($event)"></p-button>
+      <p-button label="Post" class="post-btn-margin" styleClass="p-button-sm p-button-success" [disabled]="!newPostText.valid || newPostText.value == undefined || newPostText.value.length == 0" (click)="createNewPost()"></p-button>
+  </div>
+</p-dialog>
+
+<!-- p-confirmPopup and p-toast for mounting confirm and toast overlays -->
+<p-confirmPopup></p-confirmPopup>
+<p-toast></p-toast>
+
+<!-- Router outlet below is replaced by current route's component -->
 <router-outlet />

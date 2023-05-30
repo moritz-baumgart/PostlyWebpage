@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Subject, tap } from 'rxjs';
 import { CommentDTO } from 'src/DTOs/commentdto';
 import { InteractionError } from 'src/DTOs/interactionerror';
 import { PostDTO } from 'src/DTOs/postdto';
@@ -18,6 +19,9 @@ export class ContentService {
   readonly jsonHeaders = new HttpHeaders({
     'Content-Type': 'application/json'
   })
+
+
+  private newPostCreatedSubject = new Subject<number>()
 
   constructor(private http: HttpClient) { }
 
@@ -47,6 +51,43 @@ export class ContentService {
       {
         headers: this.jsonHeaders
       }
+    )
+  }
+
+  /**
+   * Tries to create a new post with given content.
+   * @param content The text content of the post
+   */
+  createPost(content: string) {
+    return this.http.post<number>(
+      this.apiBase + '/post',
+      JSON.stringify(
+        content
+      ),
+      {
+        headers: this.jsonHeaders
+      }
+    )
+      .pipe(
+        tap((res) => {
+          this.newPostCreatedSubject.next(res)
+        })
+      )
+  }
+
+  /**
+   * Provides an observable that is triggered when a new post was created by the client which contains the id of that new post.
+   */
+  getNewPostObservable() {
+    return this.newPostCreatedSubject.asObservable()
+  }
+
+  /**
+   * Tries to retrieve a post with given post id.
+   */
+  retrievePost(postId: number) {
+    return this.http.get<PostDTO>(
+      this.apiBase + '/post/' + postId,
     )
   }
 }
