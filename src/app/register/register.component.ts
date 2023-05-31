@@ -5,6 +5,9 @@ import { AccountService } from '../account.service';
 import { EMPTY, catchError } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RegisterError } from 'src/DTOs/registererror';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Error } from 'src/DTOs/error';
+import { showGeneralError } from 'src/utils';
 
 @Component({
   selector: 'app-register',
@@ -54,34 +57,20 @@ export class RegisterComponent {
     // Initiate register
     this.accountService.register(usernameVal, passwordVal)
       .pipe(
-        catchError((_) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An error occured while connecting to the server, please try again later!'
-          })
+        catchError((err: HttpErrorResponse) => {
+          if (err.error == Error.UsernameAlreadyInUse) {
+            showGeneralError(this.messageService, 'Please choose another username!', 'warn', 'Username already in use.')
+          } else {
+            console.error(err);
+            showGeneralError(this.messageService, 'An error occured while creating your account, please try again later!')
+          }
+
           this.setLoading(false)
           return EMPTY
         })
       ).subscribe((res) => {
-        if (res.success) {
-          // Continue to the next step of the login process
-          this.step++
-        } else {
-          // Show toast when username in use or unknown error occurs  
-          if (res.error == RegisterError.UsernameAlreadyInUse) {
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Username already in use.',
-              detail: 'Please choose another username!'
-            })
-          } else {
-            this.messageService.add({
-              severity: 'error',
-              detail: 'An unknown error occured, please try again later!'
-            })
-          }
-        }
+        // Continue to the next step of the login process
+        this.step++
       })
   }
 
