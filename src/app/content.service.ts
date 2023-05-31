@@ -5,6 +5,7 @@ import { CommentDTO } from 'src/DTOs/commentdto';
 import { InteractionError } from 'src/DTOs/interactionerror';
 import { PostDTO } from 'src/DTOs/postdto';
 import { SuccessResult } from 'src/DTOs/successresult';
+import { VoteInteractionType } from 'src/DTOs/voteinteractiontype';
 import { environment } from 'src/environments/environment';
 
 /**
@@ -88,6 +89,18 @@ export class ContentService {
   retrievePost(postId: number) {
     return this.http.get<PostDTO>(
       this.apiBase + '/post/' + postId,
+    )
+  }
+
+  changeVote(postId: number, vote: VoteInteractionType) {
+    return this.http.post<PostDTO>(
+      this.apiBase + '/post/' + postId + '/vote',
+      JSON.stringify(
+        vote
+      ),
+      {
+        headers: this.jsonHeaders
+      }
     )
   }
 }

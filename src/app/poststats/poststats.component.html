@@ -1,10 +1,10 @@
 <div class="post-stats" [style.padding-top]="paddingTop" [style.padding-bottom]="paddingBottom" [style.padding-Left]="paddingLeft" [style.padding-right]="paddingRight">
-    <div class="post-stat">
+    <div class="post-stat" (click)="upvote($event)">
         <i class="pi pi-thumbs-up-fill hover-scale" *ngIf="post?.vote == VoteInteractionType.Upvote"></i>
         <i class="pi pi-thumbs-up hover-scale" *ngIf="post?.vote != VoteInteractionType.Upvote"></i>
         {{ post?.upvoteCount }}
     </div>
-    <div class="post-stat">
+    <div class="post-stat" (click)="downvote($event)">
         <i class="pi pi-thumbs-down-fill hover-scale" *ngIf="post?.vote == VoteInteractionType.Downvote"></i>
         <i class="pi pi-thumbs-down hover-scale" *ngIf="post?.vote != VoteInteractionType.Downvote"></i>
         {{ post?.downvoteCount }}
