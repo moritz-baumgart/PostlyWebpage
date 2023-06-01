@@ -19,8 +19,11 @@ export class PoststatsComponent {
   @Input() paddingTop = '1rem'
   @Input() paddingBottom = '1rem'
   VoteInteractionType = VoteInteractionType
+  voteRequestLoading = false
 
   constructor(private contentService: ContentService, private messageService: MessageService) { }
+
+  //TODO: Basically refactor this whole class
 
   upvote(event: MouseEvent) {
     event.stopPropagation() // Prevent propagation so we dont open the post detail view
@@ -28,11 +31,11 @@ export class PoststatsComponent {
     if (this.post?.vote == VoteInteractionType.Upvote) {
       // Remove vote
       this.post.vote = VoteInteractionType.Remove
-      this.requestVote(VoteInteractionType.Remove)
+      this.requestVote(VoteInteractionType.Remove, VoteInteractionType.Upvote)
     } else {
       // Upvote
       if (this.post) this.post.vote = VoteInteractionType.Upvote
-      this.requestVote(VoteInteractionType.Upvote)
+      this.requestVote(VoteInteractionType.Upvote, VoteInteractionType.Remove)
     }
   }
 
@@ -42,15 +45,23 @@ export class PoststatsComponent {
     if (this.post?.vote == VoteInteractionType.Downvote) {
       // Remove vote      
       this.post.vote = VoteInteractionType.Remove
-      this.requestVote(VoteInteractionType.Remove)
+      this.requestVote(VoteInteractionType.Remove, VoteInteractionType.Downvote)
     } else {
       // Downvote
       if (this.post) this.post.vote = VoteInteractionType.Downvote
-      this.requestVote(VoteInteractionType.Downvote)
+      this.requestVote(VoteInteractionType.Downvote, VoteInteractionType.Remove)
     }
   }
 
-  private requestVote(vote: VoteInteractionType) {
+  private requestVote(vote: VoteInteractionType, previousVote: VoteInteractionType) {
+
+    if (this.voteRequestLoading) {
+      if (this.post) this.post.vote = previousVote
+      return
+    }
+
+    this.voteRequestLoading = true
+
     if (this.post) this.contentService.changeVote(this.post.id, vote)
       .pipe(
         catchError((err: HttpErrorResponse) => {
@@ -60,6 +71,8 @@ export class PoststatsComponent {
             showGeneralError(this.messageService, 'An error occured while submitting your vote, please try again later!')
             console.error(err);
           }
+          if (this.post) this.post.vote = previousVote
+          this.voteRequestLoading = false
           return EMPTY
         })
       )
@@ -69,6 +82,7 @@ export class PoststatsComponent {
           this.post.upvoteCount = newPost.upvoteCount
           this.post.downvoteCount = newPost.downvoteCount
         }
+        this.voteRequestLoading = false
       })
   }
 }
