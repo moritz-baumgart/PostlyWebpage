@@ -1,65 +1,11 @@
 <p-tabView id="startTabs">
     <!--A tab view with 2 tabs, recommended and following-->
     <p-tabPanel header="Recommended">
-        <div id="skeletonContainer" *ngIf="posts.length == 0">
-            <p-skeleton *ngFor="let height of skeletonHeights" class="skeleton-appear" height="{{height + 'rem'}}"
-                width="100%"></p-skeleton>
-        </div>
-        <!-- when loading the skeletons above are shown, otherwise the actual posts blow -->
-        <div id="postContainer" class="post">
-            <div *ngFor="let post of posts" class="post" (click)="showPostDetails(post)">
-                <div class="post-contents">
-                    <span *ngIf="post.author.displayName" class="username">{{ post.author.displayName }} (@{{ post.author.username }})</span>
-                    <span *ngIf="!post.author.displayName" class="username">@{{ post.author.username }}</span>
-                    <span class="post-time">{{ post.createdAt | date:'medium' }}</span>
-                    <span>{{ post.content }}</span>
-                </div>
-                <app-poststats [post]="post"></app-poststats>
-            </div>
-            <p-button label="Load more" *ngIf="posts.length != 0" class="load-more-btn" styleClass="p-button-sm" (click)="loadNextPage()" [loading]="loadingNextPage"></p-button>
-        </div>
+        <app-postlist [posts]="posts" [nextPageLoadingState]="loadingNextPage" (loadNextPage)="loadNextPage()"></app-postlist>
     </p-tabPanel>
     <p-tabPanel header="Following">
         <!-- TODO: The following posts -->
     </p-tabPanel>
-
-    <!-- below is the overlay dialog for a detailed view of posts, it contains the abilitiy to comment, etc. -->
-    <p-dialog [header]="postDetails?.header || ''" [(visible)]="postDetailsVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" id="postDetailsDialog" (onHide)="postDetailsHide()" [maximizable]="true">
-        <span>{{ postDetails?.content }}</span>
-        <app-poststats [post]="postDetails?.post" [paddingLeft]="'0'" [paddingBottom]="'0'"></app-poststats>
-        <p-divider></p-divider>
-        <ng-container *ngIf="postDetails?.comments">
-            <span *ngIf="postDetails?.comments?.length == 0">No comments...</span>
-            <ng-container *ngFor="let comment of postDetails?.comments; let i = index">
-                <div>
-                    <span *ngIf="comment.author.displayName" class="username">{{ comment.author.displayName }} (@{{ comment.author.username }})</span>
-                    <span *ngIf="!comment.author.displayName" class="username">@{{ comment.author.username }}</span>
-                    <span> | </span>
-                    <span class="post-time">{{ comment.createdAt | date:'medium' }}</span>
-                </div>
-                <span>{{ comment.content }}</span>
-                <p-divider></p-divider>
-            </ng-container>
-            <section *ngIf="loggedIn">
-                <span class="p-float-label" id="commentArea">
-                    <textarea rows="5" pInputTextarea [formControl]="commentText"></textarea>
-                    <label for="float-input">Leave a comment...</label>
-                </span>
-                <div id="commentButtonContainer">
-                    <span class="comment-btn-margin" [style.color]="!commentText.valid ? 'var(--red-500)' : ''">{{ commentText.value?.length ?? 0 }}/282</span>
-                    <p-button label="Discard" class="comment-btn-margin" styleClass="p-button-sm p-button-danger p-button-outlined" (click)="discard($event)"></p-button>
-                    <p-button label="Comment" class="comment-btn-margin" styleClass="p-button-sm p-button-success" [disabled]="!commentText.valid || commentText.value == undefined || commentText.value.length == 0" (click)="comment()"></p-button>
-                </div>
-            </section>
-            <span *ngIf="!loggedIn">Log in to be able to write comments!</span>
-        </ng-container>
-        <ng-container *ngIf="postDetails?.comments == null">
-            <div id="commentSkeletonContainer" *ngFor="let _ of Array(4).fill(0)">
-                <p-skeleton height="3rem" width="100%"></p-skeleton>
-                <div class="skeleton-spacer"></div>
-            </div>
-        </ng-container>
-    </p-dialog>
 
     <!-- p-confirmPopup and p-toast for mounting confirm and toast overlays -->
     <p-confirmPopup></p-confirmPopup>

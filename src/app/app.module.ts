@@ -13,6 +13,8 @@ import { StartComponent } from './start/start.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { PoststatsComponent } from './poststats/poststats.component';
+import { ProfileComponent } from './profile/profile.component';
+import { PostlistComponent } from './postlist/postlist.component';
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -43,7 +45,9 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     StartComponent,
     LoginComponent,
     RegisterComponent,
-    PoststatsComponent
+    PoststatsComponent,
+    ProfileComponent,
+    PostlistComponent
   ],
   imports: [
     BrowserModule,
@@ -69,7 +73,7 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     DividerModule,
     DialogModule,
     InputTextareaModule,
-    ConfirmPopupModule
+    ConfirmPopupModule,
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

@@ -46,7 +46,6 @@ header {
         background-repeat: no-repeat;
         background-size: cover;
     }
-
 }
 
 .user-overlay-panel {
@@ -56,6 +55,29 @@ header {
 
     .op-margin-bottom {
         margin-bottom: 1rem;
+    }
+
+    .user-menu-list {
+        list-style-type: none;
+
+        padding: 0;
+        width: 100%;
+
+        li {
+            width: 100%;
+            height: 2rem;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            transition: background-color 180ms;
+
+            &:hover {
+                background-color: var(--highlight-bg);
+                text-decoration: underline;
+            }
+        }
     }
 }
 

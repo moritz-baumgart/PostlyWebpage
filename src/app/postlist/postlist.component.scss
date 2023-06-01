@@ -1,0 +1,101 @@
+#postContainer,
+#skeletonContainer {
+    margin-top: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#postContainer {
+    .post {
+        width: 100%;
+        border: 1px solid var(--surface-border);
+        margin-bottom: 1rem;
+        background-color: var(--surface-card);
+
+        display: flex;
+        flex-direction: column;
+
+        .stats-padding-post {
+            padding: 1rem;
+        }
+
+        .post-contents {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+
+            border-bottom: 1px solid var(--surface-border);
+
+            .username {
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
+
+            .post-time {
+                padding-bottom: 0.8rem;
+            }
+        }
+    }
+
+    .load-more-btn {
+        margin: 2rem 0;
+    }
+}
+
+#skeletonContainer {
+    p-skeleton {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
+
+#commentArea {
+    width: 100%;
+    margin-top: 2rem;
+    textarea {
+        width: 100%;
+        height: 100%;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+}
+
+#commentButtonContainer {
+    height: 4rem;
+    border: 1px solid var(--surface-border);
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .comment-btn-margin {
+        margin-right: 1rem;
+    }
+}
+
+#commentSkeletonContainer {
+    // Because this is an overlay our global style does not work here. We need to repeat this.
+    p-skeleton {
+        opacity: 0;
+        animation: appear 500ms 600ms forwards;
+        @keyframes appear {
+            to {
+                opacity: 1;
+            }
+        }
+    }
+
+    .skeleton-spacer {
+        width: 100%;
+        height: 1rem;
+    }
+}
+
+.comment-text {
+    //TODO: Check if this class is actually in use
+    margin-top: 2rem;
+}

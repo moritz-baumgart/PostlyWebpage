@@ -1,0 +1,15 @@
+<div id="profileOverview">
+    <div id="profileSection">
+        <div class="avatar">
+            <i class="pi pi-user"></i>
+        </div>
+        <p-button icon="pi pi-user-edit"></p-button>
+    </div>
+    <div id="userSummary">
+        <span id="name">First name and surname</span>
+        <span id="username">@username</span>
+        <span id="bio">Write something about yourself</span>
+        <span id="followerCount">100 Following 50 Followers</span>
+    </div>
+</div>
+<app-postlist [posts]="posts" [nextPageLoadingState]="loadingNextPage"></app-postlist>

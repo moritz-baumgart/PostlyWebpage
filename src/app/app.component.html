@@ -18,9 +18,12 @@
       <div class="avatar" (click)="userOverlayPanel.toggle($event)">
         <i class="pi pi-user"></i>
       </div>
-      <p-overlayPanel #userOverlayPanel>
+      <p-overlayPanel #userOverlayPanel id="userMenuOverlay">
         <div class="user-overlay-panel">
           <span class="op-margin-bottom">Hello, @{{ username }}</span>
+          <ul class="user-menu-list">
+            <li routerLink="/u" (click)="userOverlayPanel.hide()">Your profile</li>
+          </ul>
           <p-button label="Logout" styleClass="p-button-sm" (click)="logout()"></p-button>
         </div>
       </p-overlayPanel>
