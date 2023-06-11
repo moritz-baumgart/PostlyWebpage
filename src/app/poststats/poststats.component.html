@@ -1,15 +1,15 @@
 <div class="post-stats" [style.padding-top]="paddingTop" [style.padding-bottom]="paddingBottom" [style.padding-Left]="paddingLeft" [style.padding-right]="paddingRight">
-    <div class="post-stat" (click)="vote($event, VoteType.Upvote)">
+    <div class="post-stat pointer" (click)="vote($event, VoteType.Upvote)">
         <i class="pi pi-thumbs-up-fill" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote == VoteType.Upvote"></i>
         <i class="pi pi-thumbs-up" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote != VoteType.Upvote"></i>
         {{ post?.upvoteCount }}
     </div>
-    <div class="post-stat" (click)="vote($event, VoteType.Downvote)">
+    <div class="post-stat pointer" (click)="vote($event, VoteType.Downvote)">
         <i class="pi pi-thumbs-down-fill" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote == VoteType.Downvote"></i>
         <i class="pi pi-thumbs-down" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote != VoteType.Downvote"></i>
         {{ post?.downvoteCount }}
     </div>
-    <div class="post-stat">
+    <div class="post-stat pointer">
         <i class="pi pi-comments hover-scale" *ngIf="post?.hasCommented"></i>
         <i class="pi pi-comment hover-scale" *ngIf="!post?.hasCommented"></i>
         {{ post?.commentCount }}

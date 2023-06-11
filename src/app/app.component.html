@@ -1,6 +1,6 @@
 <header *ngIf="currentRoute != '/login' && currentRoute != '/register'">
   <div id="headerStart" class="header-inner">
-    <img src="/assets/logoSide.svg" alt="Logo" style="height: 2rem; align-self: center;" routerLink="/">
+    <img src="/assets/logoSide.svg" alt="Logo" style="height: 2rem; align-self: center;" routerLink="/" class="pointer">
   </div>
   <div id="headerMid" class="header-inner">
     <span class="p-input-icon-left" style="width: 100%;">
@@ -15,14 +15,15 @@
     </ng-container>
     <ng-container *ngIf="loggedIn != undefined && loggedIn">
       <p-button label="Create post" class="btn-margin" styleClass="p-button-sm" (click)="newPostDialogVisible = true"></p-button>
-      <div class="avatar" (click)="userOverlayPanel.toggle($event)">
+      <div class="avatar pointer" (click)="userOverlayPanel.toggle($event)">
         <i class="pi pi-user"></i>
       </div>
       <p-overlayPanel #userOverlayPanel id="userMenuOverlay">
         <div class="user-overlay-panel">
-          <span class="op-margin-bottom">Hello, @{{ username }}</span>
+          <span class="user-greeting">Hello, @{{ username }}</span>
           <ul class="user-menu-list">
-            <li routerLink="/u" (click)="userOverlayPanel.hide()">Your profile</li>
+            <li routerLink="/" (click)="userOverlayPanel.hide()" class="pointer">Start</li>
+            <li routerLink="/u" (click)="userOverlayPanel.hide()" class="pointer">Your profile</li>
           </ul>
           <p-button label="Logout" styleClass="p-button-sm" (click)="logout()"></p-button>
         </div>
