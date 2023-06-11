@@ -1,11 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject, tap } from 'rxjs';
+import { VoteUpdateViewModel } from 'src/DTOs/voteupdateviewmodel';
 import { CommentDTO } from 'src/DTOs/commentdto';
 import { InteractionError } from 'src/DTOs/interactionerror';
 import { PostDTO } from 'src/DTOs/postdto';
 import { SuccessResult } from 'src/DTOs/successresult';
-import { VoteInteractionType } from 'src/DTOs/voteinteractiontype';
+import { VoteType } from 'src/DTOs/votetype';
 import { environment } from 'src/environments/environment';
 
 /**
@@ -92,8 +93,8 @@ export class ContentService {
     )
   }
 
-  changeVote(postId: number, vote: VoteInteractionType) {
-    return this.http.post<PostDTO>(
+  setVote(postId: number, vote: VoteType) {
+    return this.http.post<VoteUpdateViewModel>(
       this.apiBase + '/post/' + postId + '/vote',
       JSON.stringify(
         vote
@@ -101,6 +102,12 @@ export class ContentService {
       {
         headers: this.jsonHeaders
       }
+    )
+  }
+
+  removeVote(postId: number) {
+    return this.http.delete<VoteUpdateViewModel>(
+      this.apiBase + '/post/' + postId + '/vote'
     )
   }
 }

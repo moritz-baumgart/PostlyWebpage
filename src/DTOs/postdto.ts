@@ -1,5 +1,5 @@
 import { AuthorDTO } from "./authordto"
-import { VoteInteractionType } from "./voteinteractiontype"
+import { VoteType } from "./votetype"
 
 export interface PostDTO {
     id: number
@@ -9,6 +9,6 @@ export interface PostDTO {
     upvoteCount: number
     downvoteCount: number
     commentCount: number
-    vote?: VoteInteractionType
+    vote?: VoteType
     hasCommented?: boolean
 }

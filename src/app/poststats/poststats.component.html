@@ -1,12 +1,12 @@
 <div class="post-stats" [style.padding-top]="paddingTop" [style.padding-bottom]="paddingBottom" [style.padding-Left]="paddingLeft" [style.padding-right]="paddingRight">
-    <div class="post-stat" (click)="upvote($event)">
-        <i class="pi pi-thumbs-up-fill" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote == VoteInteractionType.Upvote"></i>
-        <i class="pi pi-thumbs-up" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote != VoteInteractionType.Upvote"></i>
+    <div class="post-stat" (click)="vote($event, VoteType.Upvote)">
+        <i class="pi pi-thumbs-up-fill" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote == VoteType.Upvote"></i>
+        <i class="pi pi-thumbs-up" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote != VoteType.Upvote"></i>
         {{ post?.upvoteCount }}
     </div>
-    <div class="post-stat" (click)="downvote($event)">
-        <i class="pi pi-thumbs-down-fill" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote == VoteInteractionType.Downvote"></i>
-        <i class="pi pi-thumbs-down" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote != VoteInteractionType.Downvote"></i>
+    <div class="post-stat" (click)="vote($event, VoteType.Downvote)">
+        <i class="pi pi-thumbs-down-fill" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote == VoteType.Downvote"></i>
+        <i class="pi pi-thumbs-down" [ngClass]="{'hover-scale': !voteRequestLoading}" *ngIf="post?.vote != VoteType.Downvote"></i>
         {{ post?.downvoteCount }}
     </div>
     <div class="post-stat">
