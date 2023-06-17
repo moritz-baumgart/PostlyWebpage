@@ -18,9 +18,6 @@ export class StartComponent {
 
   // Pagination
   loadingNextPage = false
-  pageNumber: number;
-  paginationStart: Date;
-
 
   constructor(private contentService: ContentService, private messageService: MessageService) {
 
@@ -41,17 +38,22 @@ export class StartComponent {
       })
 
     // Fetch the latest public feed
-    this.paginationStart = new Date()
-    this.pageNumber = 0
-    contentService.getPublicFeed(this.paginationStart, this.pageNumber).subscribe((data) => {
+    //TODO: Error handling
+    contentService.getPublicFeed(new Date()).subscribe((data) => {
       this.posts = data
     })
   }
 
   loadNextPage() {
     this.loadingNextPage = true
-    this.pageNumber++
-    this.contentService.getPublicFeed(this.paginationStart, this.pageNumber)
+    let oldestPost = this.posts.at(-1)
+    if (!oldestPost) {
+      showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
+      this.loadingNextPage = false
+      return
+    }
+
+    this.contentService.getPublicFeed(new Date(oldestPost.createdAt))
       .pipe(
         catchError((err) => {
           console.error(err);

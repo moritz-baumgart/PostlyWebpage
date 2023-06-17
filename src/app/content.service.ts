@@ -28,13 +28,12 @@ export class ContentService {
   constructor(private http: HttpClient) { }
 
 
-  getPublicFeed(paginationStart: Date, pageNumber: number) {
+  getPublicFeed(paginationStart: Date) {
 
     return this.http
       .get<PostDTO[]>(this.apiBase + '/feed/public', {
         params: {
-          "paginationStart": paginationStart.toISOString(),
-          pageNumber
+          "paginationStart": paginationStart.toISOString()
         }
       })
   }
