@@ -1,15 +1,97 @@
-<div id="profileOverview">
+<div *ngIf="user" id="profileOverview">
     <div id="profileSection">
         <div class="avatar">
             <i class="pi pi-user"></i>
         </div>
-        <p-button icon="pi pi-user-edit"></p-button>
+        <p-button *ngIf="isMe" icon="pi pi-user-edit" (click)="settingsVisible = true"></p-button>
     </div>
     <div id="userSummary">
-        <span id="name">First name and surname</span>
-        <span id="username">@username</span>
-        <span id="bio">Write something about yourself</span>
-        <span id="followerCount">100 Following 50 Followers</span>
+        <span id="name">{{ user.displayName }}</span>
+        <span id="username">@{{ user.username }}</span>
+        <span id="bio">Bio is not yet implemented</span>
+        <span id="followerCount">{{ user.followingCount }} Following {{ user.followerCount }} Followers</span>
+    </div>
+</div>
+<div *ngIf="!user" id="profileOverviewSkeleton">
+    <div id="profileSection">
+        <p-skeleton size="10rem"></p-skeleton>
+        <p-button *ngIf="isMe" icon="pi pi-user-edit"></p-button>
+    </div>
+    <div id="userSummary">
+        <p-skeleton height="2rem"></p-skeleton>
+        <p-skeleton height="1.5rem"></p-skeleton>
+        <p-skeleton height="4rem"></p-skeleton>
+        <p-skeleton id="followerCount"></p-skeleton>
     </div>
 </div>
 <app-postlist [posts]="posts" [nextPageLoadingState]="loadingNextPage"></app-postlist>
+
+<p-dialog header="Edit your profile" [modal]="true" [(visible)]="settingsVisible" [style]="{ width: '50vw' }"
+    [draggable]="false" [resizable]="false" id="userSettings" [maximizable]="true" [closable]="false"
+    (onHide)="discard($event)">
+    <div id="userSettings">
+        <p-listbox [options]="settingsTabs" [formControl]="currentSettingsTab" [style]="{ width: '15rem' }"></p-listbox>
+        <section *ngIf="this.currentSettingsTab.value == this.settingsTabs[0]">
+            <span class="p-float-label">
+                <input pInputText id="displayname" [(ngModel)]="settingsModel.displayName"
+                    [readonly]="saveBtnLoading.value" />
+                <label htmlFor="displayname">Displayname</label>
+            </span>
+            <span class="p-float-label">
+                <p-calendar [(ngModel)]="settingsModel.birthday" id="birthday" class="custom-calendar" appendTo="body"
+                    [readonlyInput]="saveBtnLoading.value"></p-calendar>
+                <label htmlFor="birthday">Birthday</label>
+            </span>
+            <span id="genderField">
+                <p-dropdown [(ngModel)]="settingsModel.gender" id="gender" [options]="genderOptions" optionLabel="name"
+                    optionValue="value" appendTo="body" [readonly]="saveBtnLoading.value"></p-dropdown>
+                <label htmlFor="gender">Gender</label>
+            </span>
+        </section>
+
+        <section *ngIf="this.currentSettingsTab.value == this.settingsTabs[1]">
+            <span class="p-float-label">
+                <input pInputText id="email" [(ngModel)]="settingsModel.email" [readonly]="saveBtnLoading.value" />
+                <label htmlFor="email">Email</label>
+            </span>
+            <span class="p-float-label">
+                <input pInputText id="phone" [(ngModel)]="settingsModel.phoneNumber"
+                    [readonly]="saveBtnLoading.value" />
+                <label htmlFor="phone">Phone</label>
+            </span>
+        </section>
+
+        <section *ngIf="this.currentSettingsTab.value == this.settingsTabs[2]" [formGroup]="passwordForm">
+            <span class="p-float-label">
+                <input pInputText id="username" [formControl]="usernameForm" [readonly]="saveBtnLoading.value" />
+                <label htmlFor="username">Username</label>
+            </span>
+            <span>Changing your username requires you to sign in again.</span>
+        </section>
+
+        <section *ngIf="this.currentSettingsTab.value == this.settingsTabs[3]" [formGroup]="passwordForm">
+            <span class="p-float-label">
+                <p-password [toggleMask]="true" formControlName="oldPassword" [feedback]="false"></p-password>
+                <label htmlFor="oldPassword">Old password</label>
+            </span>
+            <span class="p-float-label">
+                <p-password [toggleMask]="true" formControlName="newPassword"></p-password>
+                <label htmlFor="newPassword">New password</label>
+            </span>
+            <span class="p-float-label">
+                <p-password [toggleMask]="true" formControlName="retypeNewPassword" [feedback]="false"></p-password>
+                <label htmlFor="retypeNewPassword">Retype new password</label>
+            </span>
+            <span>Changing your password requires you to sign in again.</span>
+        </section>
+    </div>
+    <div id="userSettingsButtons">
+        <p-button label="Discard" styleClass="p-button-warning p-button-outlined" (click)="discard($event)"
+            [disabled]="saveBtnLoading.value"></p-button>
+        <p-button [label]="saveBtnText" styleClass="p-button-success" (click)="save()"
+            [loading]="saveBtnLoading.value"></p-button>
+    </div>
+</p-dialog>
+
+<!-- p-toast for mounting toasts -->
+<p-toast></p-toast>

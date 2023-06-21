@@ -38,6 +38,26 @@ export class ContentService {
       })
   }
 
+  /**
+   * Retrieves a page of posts authored by a given user.
+   */
+  getUserFeed(paginationStart: Date, username?: string) {
+
+    let requestUrl
+    if (username) {
+      requestUrl = this.apiBase + '/feed/profile/' + username
+    } else {
+      requestUrl = this.apiBase + '/feed/profile/me'
+    }
+
+    return this.http
+      .get<PostDTO[]>(requestUrl, {
+        params: {
+          "paginationStart": paginationStart.toISOString()
+        }
+      })
+  }
+
   getCommentsForPost(postId: number) {
     return this.http.get<CommentDTO[]>(this.apiBase + '/post/' + postId + '/comments')
   }

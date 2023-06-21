@@ -49,6 +49,37 @@
     }
 }
 
+#profileOverviewSkeleton {
+    width: 65rem;
+    max-width: 90%;
+
+    border-bottom: 1px solid var(--surface-border);
+
+    padding-bottom: 0.5rem;
+
+    #profileSection {
+        height: 50%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #userSummary {
+        height: 50%;
+
+        display: flex;
+        flex-direction: column;
+
+        p-skeleton {
+            margin-top: 1rem;
+            width: 40%;
+        }
+
+        #followerCount {
+            align-self: flex-end;
+        }
+    }
+}
+
 .avatar {
     aspect-ratio: 1;
     background-color: #3e4053;
@@ -66,5 +97,47 @@
 
     i {
         font-size: 100%;
+    }
+}
+
+#userSettings {
+    display: flex;
+
+    section {
+        display: flex;
+        flex-direction: column;
+        padding-left: 3rem;
+
+        span {
+            margin-top: 2rem;
+        }
+
+        // The followign recreated the float label effect as if the label is always "floating".
+        // we need this hack because the gender value for "Prefer not to say" is null and primeng considers
+        // it empty then resulting in the label to not float above the input
+        #genderField {
+            label {
+                color: var(--text-color-secondary);
+                position: absolute;
+                top: -0.75rem;
+                margin-top: -0.5rem;
+                left: 0.75rem;
+                font-size: 12px;
+            }
+
+            display: block;
+            position: relative;
+        }
+    }
+
+    padding-bottom: 2rem;
+}
+
+#userSettingsButtons {
+    display: flex;
+    justify-content: flex-end;
+
+    p-button {
+        margin-left: 1rem;
     }
 }

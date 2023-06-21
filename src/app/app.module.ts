@@ -27,6 +27,9 @@ import { DividerModule } from 'primeng/divider';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ListboxModule } from 'primeng/listbox';
+import { CalendarModule } from 'primeng/calendar';
+import { DropdownModule } from 'primeng/dropdown';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -74,6 +77,9 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     DialogModule,
     InputTextareaModule,
     ConfirmPopupModule,
+    ListboxModule,
+    CalendarModule,
+    DropdownModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
