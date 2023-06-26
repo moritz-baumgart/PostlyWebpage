@@ -56,7 +56,10 @@ export class AccountService {
    */
   logout(redirect?: string) {
     this.cookie.delete('jwt')
-    if (redirect) this.router.navigateByUrl(redirect)
+    this.refreshLoginStatus()
+    setTimeout(() => {
+      if (redirect) this.router.navigateByUrl(redirect)
+    }, 500)
   }
 
   register(username: string, password: string) {

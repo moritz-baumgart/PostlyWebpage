@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { EMPTY, catchError, filter } from 'rxjs';
 import { AccountService } from './account.service';
@@ -9,6 +9,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { ContentService } from './content.service';
 import { showGeneralError } from 'src/utils';
 import { Role } from 'src/DTOs/role';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +29,8 @@ export class AppComponent {
 
   newPostDialogVisible = false
   newPostText = new FormControl('', Validators.maxLength(282))
+
+  @ViewChild('userOverlayPanel') userOverlayPanel!: OverlayPanel
 
   constructor(private router: Router, private accountService: AccountService, jwtHelper: JwtHelperService, private confirmationService: ConfirmationService, private contentService: ContentService, private messageService: MessageService) {
 
@@ -56,9 +59,8 @@ export class AppComponent {
   }
 
   logout() {
-    this.accountService.logout()
-    this.router.navigate(['/'])
-    window.location.reload()
+    this.accountService.logout('/')
+    this.userOverlayPanel.hide()
   }
 
   discardPost(event: Event) {

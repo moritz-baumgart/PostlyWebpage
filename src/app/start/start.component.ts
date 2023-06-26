@@ -2,9 +2,10 @@ import { Component, HostListener } from '@angular/core';
 import { ContentService } from '../content.service';
 import { PostDTO } from 'src/DTOs/postdto';
 import { DatePipe } from '@angular/common';
-import { EMPTY, catchError } from 'rxjs';
+import { EMPTY, catchError, pipe } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { showGeneralError } from 'src/utils';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-start',
@@ -14,12 +15,38 @@ import { showGeneralError } from 'src/utils';
 })
 export class StartComponent {
 
-  posts: PostDTO[] = []
+  // public
+  publicPosts: PostDTO[] = []
+  loadingNextPublicPage = false
 
-  // Pagination
-  loadingNextPage = false
+  // private
+  privatePosts: PostDTO[] = []
+  loadingNextPrivatePage = false
 
-  constructor(private contentService: ContentService, private messageService: MessageService) {
+  // login state
+  isLoggedIn = false
+
+  constructor(private contentService: ContentService, private messageService: MessageService, accountService: AccountService) {
+
+    accountService.isLoggedIn()
+      .subscribe(loggedIn => {
+        this.isLoggedIn = loggedIn
+
+        // Fetch the latest private feed, only if logged in
+        if (loggedIn) {
+          contentService.getPrivateFeed(new Date())
+            .pipe(
+              catchError(err => {
+                showGeneralError(messageService, 'An error occured while loading your following feed. Please try again later!')
+                console.error(err);
+                return EMPTY
+              })
+            )
+            .subscribe((data) => {
+              this.privatePosts = data
+            })
+        }
+      })
 
     // Subscribe to the new post subject, this fires when the users adds a new post so we can load it to the start of our list.
     contentService.getNewPostObservable()
@@ -33,23 +60,30 @@ export class StartComponent {
             })
           )
           .subscribe((post) => {
-            this.posts.unshift(post)
+            this.publicPosts.unshift(post)
           })
       })
 
     // Fetch the latest public feed
-    //TODO: Error handling
-    contentService.getPublicFeed(new Date()).subscribe((data) => {
-      this.posts = data
-    })
+    contentService.getPublicFeed(new Date())
+      .pipe(
+        catchError(err => {
+          showGeneralError(messageService, 'An error occured while loading your public feed. Please try again later!')
+          console.error(err);
+          return EMPTY
+        })
+      )
+      .subscribe((data) => {
+        this.publicPosts = data
+      })
   }
 
-  loadNextPage() {
-    this.loadingNextPage = true
-    let oldestPost = this.posts.at(-1)
+  loadNextPublicPage() {
+    this.loadingNextPublicPage = true
+    let oldestPost = this.publicPosts.at(-1)
     if (!oldestPost) {
       showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
-      this.loadingNextPage = false
+      this.loadingNextPublicPage = false
       return
     }
 
@@ -65,8 +99,37 @@ export class StartComponent {
         if (data.length == 0) {
           showGeneralError(this.messageService, 'No more posts available to load!', 'info', '')
         }
-        this.posts.push(...data)
-        this.loadingNextPage = false
+        this.publicPosts.push(...data)
+        this.loadingNextPublicPage = false
+      })
+  }
+
+  loadNextPrivatePage() {
+    if (!this.isLoggedIn) {
+      return
+    }
+    this.loadingNextPrivatePage = true
+    let oldestPost = this.privatePosts.at(-1)
+    if (!oldestPost) {
+      showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
+      this.loadingNextPrivatePage = false
+      return
+    }
+
+    this.contentService.getPublicFeed(new Date(oldestPost.createdAt))
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
+          return EMPTY
+        })
+      )
+      .subscribe((data) => {
+        if (data.length == 0) {
+          showGeneralError(this.messageService, 'No more posts available to load!', 'info', '')
+        }
+        this.privatePosts.push(...data)
+        this.loadingNextPrivatePage = false
       })
   }
 }

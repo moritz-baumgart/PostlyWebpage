@@ -58,6 +58,16 @@ export class ContentService {
       })
   }
 
+  getPrivateFeed(paginationStart: Date) {
+
+    return this.http
+      .get<PostDTO[]>(this.apiBase + '/feed/private', {
+        params: {
+          "paginationStart": paginationStart.toISOString()
+        }
+      })
+  }
+
   getCommentsForPost(postId: number) {
     return this.http.get<CommentDTO[]>(this.apiBase + '/post/' + postId + '/comments')
   }
