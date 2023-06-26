@@ -11,4 +11,5 @@ export interface UserProfileViewModel {
     followingCount: number;
     birthday: string | null;
     gender: Gender | null;
+    follow: boolean | null
 }

@@ -3,6 +3,7 @@
         <div class="avatar">
             <i class="pi pi-user"></i>
         </div>
+        <p-button *ngIf="!isMe && followBtnText != null" (click)="follow()" [loading]="followBtnLoading">{{ followBtnText }}</p-button>
         <p-button *ngIf="isMe" icon="pi pi-user-edit" (click)="settingsVisible = true"></p-button>
     </div>
     <div id="userSummary">

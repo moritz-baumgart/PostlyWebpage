@@ -63,6 +63,9 @@ export class ProfileComponent {
     retypeNewPassword: new FormControl('', { nonNullable: true, validators: Validators.required })
   })
 
+  followBtnText: string | null = null
+  followBtnLoading = false
+
   constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, contentService: ContentService, private messageService: MessageService) {
 
     activatedRoute.params.subscribe((params) => {
@@ -72,6 +75,7 @@ export class ProfileComponent {
       accountService.getUserProfile(this.username)
         .subscribe(res => {
           this.user = res
+          this.setFollowBtnText(res)
         })
 
       if (this.isMe) {
@@ -250,9 +254,47 @@ export class ProfileComponent {
     }
 
   }
+
+  follow() {
+    if (this.followBtnLoading) {
+      return
+    }
+    this.followBtnLoading = true
+    if (this.isMe) {
+      return
+    }
+    if (this.user == null || this.user.follow == null) {
+      return
+    }
+
+    this.accountService.changeFollow(this.username, !this.user.follow)
+      .pipe(
+        catchError(err => {
+          showGeneralError(this.messageService, 'There was an error while changing the following status. Please try again later!')
+          this.followBtnLoading = false
+          return EMPTY
+        })
+      )
+      .subscribe(res => {
+        this.user = res
+        this.setFollowBtnText(res)
+        this.followBtnLoading = false
+      })
+  }
+
+  setFollowBtnText(userViewModel: UserProfileViewModel) {
+    if (userViewModel.follow == null) {
+      this.followBtnText = null
+    } else if (userViewModel.follow) {
+      this.followBtnText = 'Unfollow'
+    } else {
+      this.followBtnText = 'Follow'
+    }
+  }
 }
 
 interface GenderOption {
   value: Gender | null,
   name: string
 }
+
