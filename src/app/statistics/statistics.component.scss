@@ -1,0 +1,42 @@
+#statGrid {
+    display: grid;
+    grid-template-rows: 1fr 1fr 4fr 4fr 4fr 4fr;
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 5rem;
+    column-gap: 5rem;
+    margin: 5rem;
+
+    p-card,
+    #genderDistChart {
+
+        div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+
+            p-skeleton,
+            h1 {
+                margin-top: .25em;
+                margin-bottom: .25em;
+            }
+
+            h1 {
+                font-size: 2.08rem;
+            }
+        }
+    }
+
+    .secondRow {
+        grid-row: 2;
+    }
+
+    #genderDistChart {
+        grid-row: 1 / span 2;
+        grid-column: 3;
+    }
+
+    .linechart {
+        grid-column: 1 / span 2;
+    }
+}

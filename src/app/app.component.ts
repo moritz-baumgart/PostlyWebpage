@@ -8,6 +8,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormControl, Validators } from '@angular/forms';
 import { ContentService } from './content.service';
 import { showGeneralError } from 'src/utils';
+import { Role } from 'src/DTOs/role';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +22,9 @@ export class AppComponent {
   currentRoute = ''
   loggedIn: boolean | undefined
   username = ''
+  currentRole = ''
+
+  Role = Role
 
   newPostDialogVisible = false
   newPostText = new FormControl('', Validators.maxLength(282))
@@ -46,6 +50,7 @@ export class AppComponent {
         this.loggedIn = res
         if (this.loggedIn) {
           this.username = jwtHelper.decodeToken()[ClaimTypes.nameIdentifier]
+          this.currentRole = jwtHelper.decodeToken()[ClaimTypes.role]
         }
       })
   }

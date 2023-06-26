@@ -15,6 +15,7 @@ import { RegisterComponent } from './register/register.component';
 import { PoststatsComponent } from './poststats/poststats.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PostlistComponent } from './postlist/postlist.component';
+import { StatisticsComponent } from './statistics/statistics.component';
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -30,6 +31,8 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ListboxModule } from 'primeng/listbox';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
+import { CardModule } from 'primeng/card';
+import { ChartModule } from 'primeng/chart';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -50,7 +53,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     RegisterComponent,
     PoststatsComponent,
     ProfileComponent,
-    PostlistComponent
+    PostlistComponent,
+    StatisticsComponent
   ],
   imports: [
     BrowserModule,
@@ -79,7 +83,9 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     ConfirmPopupModule,
     ListboxModule,
     CalendarModule,
-    DropdownModule
+    DropdownModule,
+    CardModule,
+    ChartModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

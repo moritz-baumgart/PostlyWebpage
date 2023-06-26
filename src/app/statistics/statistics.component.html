@@ -1,0 +1,72 @@
+<div id="statGrid">
+    <p-card>
+        <div>
+            <h1>{{ totalUsers }}</h1>
+            <p-skeleton *ngIf="totalUsers == null" height="2rem" width="7rem"></p-skeleton>
+            <h2>Total Users</h2>
+        </div>
+    </p-card>
+    <p-card>
+        <div>
+            <h1>{{ totalLogins }}</h1>
+            <p-skeleton *ngIf="totalLogins == null" height="2rem" width="7rem"></p-skeleton>
+            <h2>Total Logins</h2>
+        </div>
+    </p-card>
+    <p-card class="secondRow">
+        <div>
+            <h1>{{ totalPosts }}</h1>
+            <p-skeleton *ngIf="totalPosts == null" height="2rem" width="7rem"></p-skeleton>
+            <h2>Total Posts</h2>
+        </div>
+    </p-card>
+    <p-card class="secondRow">
+        <div>
+            <h1>{{ totalComments }}</h1>
+            <p-skeleton *ngIf="totalComments == null" height="2rem" width="7rem"></p-skeleton>
+            <h2>Total Comments</h2>
+        </div>
+    </p-card>
+    <p-card id="genderDistChart" [style]="{ 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'width': '100%', 'height': '100%' }">
+        <div>
+            <p-chart #genderPieChart type="doughnut" [data]="genderPieData" [options]="genderPieOptions"></p-chart>
+            <h2>Gender distribution</h2>
+        </div>
+    </p-card>
+
+    <p-chart #userPerDayChart type="line" class="linechart" [data]="userPerDayData" [options]="linechartOptions"></p-chart>
+    <p-card>
+        <div>
+            <h1>{{ newUsersToday }}</h1>
+            <p-skeleton *ngIf="newUsersToday == null" height="2rem" width="7rem"></p-skeleton>
+            <h2>New users today</h2>
+        </div>
+    </p-card>
+
+    <p-chart #loginsPerDayChart type="line" class="linechart" [data]="loginsPerDayData" [options]="linechartOptions"></p-chart>
+    <p-card>
+        <div>
+            <h1>{{ loginsToday }}</h1>
+            <p-skeleton *ngIf="loginsToday == null" height="2rem" width="7rem"></p-skeleton>
+            <h2>New logins today</h2>
+        </div>
+    </p-card>
+
+    <p-chart #postsPerDayChart type="line" class="linechart" [data]="postsPerDayData" [options]="linechartOptions"></p-chart>
+    <p-card>
+        <div>
+            <h1>{{ postsToday }}</h1>
+            <p-skeleton *ngIf="postsToday == null" height="2rem" width="7rem"></p-skeleton>
+            <h2>Posts today</h2>
+        </div>
+    </p-card>
+
+    <p-chart #commentsPerDayChart type="line" class="linechart" [data]="commentsPerDayData" [options]="linechartOptions"></p-chart>
+    <p-card>
+        <div>
+            <h1>{{ commentsToday }}</h1>
+            <p-skeleton *ngIf="commentsToday == null" height="2rem" width="7rem"></p-skeleton>
+            <h2>Comments today</h2>
+        </div>
+    </p-card>
+</div>

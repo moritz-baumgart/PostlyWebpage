@@ -39,7 +39,7 @@ export class ProfileComponent {
     { value: Gender.Male, name: 'Male' },
     { value: Gender.Female, name: 'Female' },
     { value: Gender.Other, name: 'Other' },
-    { value: null, name: 'Prefer not to say' }
+    { value: Gender.NoAnswer, name: 'Prefer not to say' }
   ]
 
   userData: UserDataViewModel | null = null
