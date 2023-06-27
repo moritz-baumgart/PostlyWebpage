@@ -8,6 +8,7 @@ import { RegisterError } from 'src/DTOs/registererror';
 import { SuccessResult } from 'src/DTOs/successresult';
 import { UserDataUpdateRequest } from 'src/DTOs/userdataupdaterequest';
 import { UserDataViewModel } from 'src/DTOs/userdataviewmodel';
+import { UserDTO } from 'src/DTOs/userdto';
 import { UserProfileViewModel } from 'src/DTOs/userprofileviewmodel';
 import { environment } from 'src/environments/environment';
 
@@ -174,16 +175,32 @@ export class AccountService {
   }
 
   /**
-   * Follows or unfollows a user.
-   * @param targetUsername The username to follow/unfollow.
-   * @param follow If set to true, adds a follow, otherwise removes it
-   * @returns Observable with the updated UserProfileViewModel
-   */
+ * Follows or unfollows a user.
+ * @param targetUsername The username to follow/unfollow.
+ * @param follow If set to true, adds a follow, otherwise removes it
+ * @returns Observable with the updated UserProfileViewModel
+  */
   changeFollow(targetUsername: string, follow: boolean) {
     if (follow) {
       return this.http.post<UserProfileViewModel>(this.apiBase + '/account/me/following/' + targetUsername, null)
     } else {
       return this.http.delete<UserProfileViewModel>(this.apiBase + '/account/me/following/' + targetUsername)
+    }
+  }
+
+  getFollower(username?: string) {
+    if (username) {
+      return this.http.get<UserDTO[]>(this.apiBase + '/account/' + username + '/followers')
+    } else {
+      return this.http.get<UserDTO[]>(this.apiBase + '/account/me/followers')
+    }
+  }
+
+  getFollowing(username?: string) {
+    if (username) {
+      return this.http.get<UserDTO[]>(this.apiBase + '/account/' + username + '/following')
+    } else {
+      return this.http.get<UserDTO[]>(this.apiBase + '/account/me/following')
     }
   }
 }

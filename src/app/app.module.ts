@@ -33,6 +33,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
+import { UserlistComponent } from './userlist/userlist.component';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -54,7 +55,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     PoststatsComponent,
     ProfileComponent,
     PostlistComponent,
-    StatisticsComponent
+    StatisticsComponent,
+    UserlistComponent
   ],
   imports: [
     BrowserModule,

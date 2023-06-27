@@ -10,7 +10,11 @@
         <span id="name">{{ user.displayName }}</span>
         <span id="username">@{{ user.username }}</span>
         <span id="bio">Bio is not yet implemented</span>
-        <span id="followerCount">{{ user.followingCount }} Following {{ user.followerCount }} Followers</span>
+        <div id="followerCount">
+            <span class="pointer highlighthover" (click)="showFollowDialog('following')">{{ user.followingCount }} Following</span>
+            <span style="margin: 0 0.5rem 0 0.5rem;">|</span>
+            <span class="pointer highlighthover" (click)="showFollowDialog('follower')">{{ user.followerCount }} Followers</span>
+        </div>
     </div>
 </div>
 <div *ngIf="!user" id="profileOverviewSkeleton">
@@ -92,6 +96,13 @@
         <p-button [label]="saveBtnText" styleClass="p-button-success" (click)="save()"
             [loading]="saveBtnLoading.value"></p-button>
     </div>
+</p-dialog>
+
+<p-dialog header="Following" [modal]="true" [(visible)]="showFollowingDialog" [style]="{ width: '50vw', 'max-height': '50vh' }" [closable]="true">
+    <app-userlist [users]="followingUser" emptyMessage="Looks really empty in here!" (hideDialog)="hideDialog()"></app-userlist>
+</p-dialog>
+<p-dialog header="Followers" [modal]="true" [(visible)]="showFollowerDialog" [style]="{ width: '50vw', 'max-height': '50vh' }" [closable]="true">
+    <app-userlist [users]="followerUser"  emptyMessage="Looks really empty in here!" (hideDialog)="hideDialog()"></app-userlist>
 </p-dialog>
 
 <!-- p-toast for mounting toasts -->

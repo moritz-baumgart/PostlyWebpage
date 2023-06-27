@@ -14,6 +14,7 @@ import { showGeneralError } from 'src/utils';
 import { Role } from 'src/DTOs/role';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Error } from 'src/DTOs/error';
+import { UserDTO } from 'src/DTOs/userdto';
 
 @Component({
   selector: 'app-profile',
@@ -65,6 +66,11 @@ export class ProfileComponent {
 
   followBtnText: string | null = null
   followBtnLoading = false
+
+  showFollowingDialog = false
+  followingUser: UserDTO[] | null = null
+  showFollowerDialog = false
+  followerUser: UserDTO[] | null = null
 
   constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, contentService: ContentService, private messageService: MessageService) {
 
@@ -234,7 +240,6 @@ export class ProfileComponent {
         this.accountService.changePassword(this.passwordForm.controls.oldPassword.value, this.passwordForm.controls.newPassword.value)
           .pipe(
             catchError((errorResponse: HttpErrorResponse) => {
-              debugger
               if (errorResponse.error == Error.PasswordIncorrect) {
                 showGeneralError(this.messageService, 'The given old password is not correct!', 'warn', '')
               } else {
@@ -290,6 +295,27 @@ export class ProfileComponent {
     } else {
       this.followBtnText = 'Follow'
     }
+  }
+
+  showFollowDialog(type: 'follower' | 'following') {
+    if (type == 'following') {
+      this.showFollowingDialog = true
+      this.accountService.getFollowing(this.username)
+        .subscribe(res => {
+          this.followingUser = res
+        })
+    } else if (type == 'follower') {
+      this.showFollowerDialog = true
+      this.accountService.getFollower(this.username)
+        .subscribe(res => {
+          this.followerUser = res
+        })
+    }
+  }
+
+  hideDialog() {
+    this.showFollowerDialog = false
+    this.showFollowingDialog = false
   }
 }
 

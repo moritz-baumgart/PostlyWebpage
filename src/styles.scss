@@ -12,6 +12,7 @@ body {
 p-skeleton {
     opacity: 0;
     animation: appear 500ms 600ms forwards;
+
     @keyframes appear {
         to {
             opacity: 1;
@@ -21,4 +22,12 @@ p-skeleton {
 
 .pointer {
     cursor: pointer;
+}
+
+.highlighthover {
+    transition: color 200ms;
+
+    &:hover {
+        color: var(--highlight-text-color);
+    }
 }

@@ -1,10 +1,10 @@
-import { AuthorDTO } from "./authordto"
+import { UserDTO } from "./userdto"
 import { VoteType } from "./votetype"
 
 export interface PostDTO {
     id: number
     content: string
-    author: AuthorDTO
+    author: UserDTO
     createdAt: Date
     upvoteCount: number
     downvoteCount: number

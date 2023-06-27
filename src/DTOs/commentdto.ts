@@ -1,8 +1,8 @@
-import { AuthorDTO } from "./authordto";
+import { UserDTO } from "./userdto";
 
 export interface CommentDTO {
     id: number
-    author: AuthorDTO
+    author: UserDTO
     createdAt: Date
     content: string
 }
