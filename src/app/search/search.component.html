@@ -1,0 +1,8 @@
+<div id="searchResults">
+    <header style="margin-bottom: 2rem;">
+        <h1>Search result for "{{ query }}":</h1>
+        <p-button label="Go back" styleClass="p-button-outlined p-button-warning p-button-sm" (onClick)="history.back()"></p-button>
+    </header>
+    <app-userlist emptyMessage="No search results for this query!" [users]="users" [entryStyle]="{'font-size': '1.5rem'}"></app-userlist>
+</div>
+

@@ -3,10 +3,10 @@
     <img src="/assets/logoSide.svg" alt="Logo" style="height: 2rem; align-self: center;" routerLink="/" class="pointer">
   </div>
   <div id="headerMid" class="header-inner">
-    <span class="p-input-icon-left" style="width: 100%;">
-      <i class="pi pi-search"></i>
-      <input type="text" pInputText placeholder="Search" style="width: 100%;" class="p-inputtext-sm" />
-    </span>
+    <div class="p-inputgroup">
+        <input type="text" pInputText placeholder="Search" [formControl]="searchQuery" class="p-inputtext-sm" (keydown.enter)="search()"/>
+        <button type="button" icon="pi pi-search" pButton label="Search" class="p-button-sm" (click)="search()"></button>
+      </div>
   </div>
   <div id="headerEnd" class="header-inner">
     <ng-container *ngIf="loggedIn != undefined && !loggedIn">

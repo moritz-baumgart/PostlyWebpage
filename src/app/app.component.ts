@@ -30,6 +30,8 @@ export class AppComponent {
   newPostDialogVisible = false
   newPostText = new FormControl('', Validators.maxLength(282))
 
+  searchQuery = new FormControl('', { nonNullable: true })
+
   @ViewChild('userOverlayPanel') userOverlayPanel!: OverlayPanel
 
   constructor(private router: Router, private accountService: AccountService, jwtHelper: JwtHelperService, private confirmationService: ConfirmationService, private contentService: ContentService, private messageService: MessageService) {
@@ -98,5 +100,11 @@ export class AppComponent {
         this.newPostText.setValue('')
         showGeneralError(this.messageService, 'Post created!', 'success', '')
       })
+  }
+
+  search() {
+    if (this.searchQuery.value.length > 0) {
+      this.router.navigateByUrl('/s?q=' + this.searchQuery.value)
+    }
   }
 }

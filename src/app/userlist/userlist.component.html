@@ -1,8 +1,8 @@
 <ng-container *ngIf="users != null">
     <ng-container *ngFor="let user of users">
         <p-divider></p-divider>
-        <span *ngIf="user.displayName" class="username pointer highlighthover" routerLink="/u/{{user.username}}" (click)="hideDialog.emit()">{{ user.displayName }} (@{{ user.username }})</span>
-        <span *ngIf="!user.displayName" class="username pointer highlighthover" routerLink="/u/{{user.username}}" (click)="hideDialog.emit()">@{{ user.username }}</span>
+        <span [ngStyle]="entryStyle" *ngIf="user.displayName" class="username pointer highlighthover" routerLink="/u/{{user.username}}" (click)="hideDialog.emit()">{{ user.displayName }} (@{{ user.username }})</span>
+        <span [ngStyle]="entryStyle" *ngIf="!user.displayName" class="username pointer highlighthover" routerLink="/u/{{user.username}}" (click)="hideDialog.emit()">@{{ user.username }}</span>
     </ng-container>
     <span *ngIf="users.length == 0">{{ emptyMessage }}</span>
 </ng-container>

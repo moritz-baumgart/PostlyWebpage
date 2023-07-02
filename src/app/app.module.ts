@@ -16,6 +16,7 @@ import { PoststatsComponent } from './poststats/poststats.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PostlistComponent } from './postlist/postlist.component';
 import { StatisticsComponent } from './statistics/statistics.component';
+import { SearchComponent } from './search/search.component';
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -56,7 +57,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     ProfileComponent,
     PostlistComponent,
     StatisticsComponent,
-    UserlistComponent
+    UserlistComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,
