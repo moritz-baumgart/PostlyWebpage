@@ -116,7 +116,7 @@ export class StartComponent {
       return
     }
 
-    this.contentService.getPublicFeed(new Date(oldestPost.createdAt))
+    this.contentService.getPrivateFeed(new Date(oldestPost.createdAt))
       .pipe(
         catchError((err) => {
           console.error(err);
