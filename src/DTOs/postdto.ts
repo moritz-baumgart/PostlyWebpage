@@ -9,6 +9,6 @@ export interface PostDTO {
     upvoteCount: number
     downvoteCount: number
     commentCount: number
-    vote?: VoteType
+    vote: VoteType | null
     hasCommented?: boolean
 }

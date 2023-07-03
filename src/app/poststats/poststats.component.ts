@@ -26,7 +26,6 @@ export class PoststatsComponent {
 
   vote(event: MouseEvent, vote: VoteType) {
     event.stopPropagation() // Prevent propagation so we dont open the post detail view
-
     if (this.voteRequestLoading) { // Cancel if there's a request ongoing
       return
     }
@@ -43,7 +42,7 @@ export class PoststatsComponent {
     }
   }
 
-  requestVote(vote: VoteType, previousVote?: VoteType) {
+  requestVote(vote: VoteType, previousVote: VoteType | null) {
     if (this.post) this.contentService.setVote(this.post.id, vote)
       .pipe(
         catchError((err: HttpErrorResponse) => {
@@ -67,7 +66,7 @@ export class PoststatsComponent {
       })
   }
 
-  private handleVoteError(err: HttpErrorResponse, previousVote?: VoteType) {
+  private handleVoteError(err: HttpErrorResponse, previousVote: VoteType | null) {
     if (err.status == 401) {
       showGeneralError(this.messageService, 'You have to be logged in to vote on a post!', 'warn')
     } else {
@@ -83,6 +82,7 @@ export class PoststatsComponent {
     if (this.post) {
       this.post.downvoteCount = update.downvoteCount
       this.post.upvoteCount = update.upvoteCount
+      this.post.vote = update.voteType
     }
     this.voteRequestLoading = false
   }
