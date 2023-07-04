@@ -22,7 +22,12 @@
     #profileSection {
         height: 50%;
         display: flex;
-        justify-content: space-between;
+        > #userActionButtons {
+            margin-left: auto;
+            > p-button {
+                margin-left: 1rem;
+            }
+        }
     }
 
     #userSummary {
@@ -35,7 +40,7 @@
             font-size: 2rem;
         }
 
-        #username {
+        .username {
             font-size: 1.5rem;
         }
 

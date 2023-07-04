@@ -5,6 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { ReplaySubject, catchError, of, tap } from 'rxjs';
 import { PasswordUpdateRequest } from 'src/DTOs/passwordupdaterequest';
 import { RegisterError } from 'src/DTOs/registererror';
+import { Role } from 'src/DTOs/role';
 import { SuccessResult } from 'src/DTOs/successresult';
 import { UserDataUpdateRequest } from 'src/DTOs/userdataupdaterequest';
 import { UserDataViewModel } from 'src/DTOs/userdataviewmodel';
@@ -202,5 +203,15 @@ export class AccountService {
     } else {
       return this.http.get<UserDTO[]>(this.apiBase + '/account/me/following')
     }
+  }
+
+  updateUserRole(username: string, role: Role) {
+    return this.http.put<UserProfileViewModel>(
+      this.apiBase + '/account/' + username + '/role',
+      JSON.stringify(role),
+      {
+        headers: this.jsonHeaders
+      }
+    )
   }
 }

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PostDTO } from 'src/DTOs/postdto';
 import { AccountService } from '../account.service';
 import { ContentService } from '../content.service';
@@ -15,6 +15,8 @@ import { Role } from 'src/DTOs/role';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Error } from 'src/DTOs/error';
 import { UserDTO } from 'src/DTOs/userdto';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { ClaimTypes } from 'src/DTOs/claimtypes';
 
 @Component({
   selector: 'app-profile',
@@ -24,11 +26,17 @@ import { UserDTO } from 'src/DTOs/userdto';
 })
 export class ProfileComponent {
 
+  currentUserRoleName: string
+  Role = Role
+
+  changemodBtnLoading = false
+  changemodBtnText: string | null = null
+
   posts: PostDTO[] = []
-  user: UserProfileViewModel | null = null
+  userProfile: UserProfileViewModel | null = null
   loadingNextPage = false
   isMe = false
-  username = ''
+  usernameFromRoute = ''
 
   settingsVisible = false
   settingsTabs = ['Profile', 'Account details', 'Username', 'Password']
@@ -72,16 +80,26 @@ export class ProfileComponent {
   showFollowerDialog = false
   followerUser: UserDTO[] | null = null
 
-  constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, contentService: ContentService, private messageService: MessageService) {
+  constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, contentService: ContentService, private messageService: MessageService, jwtHelper: JwtHelperService, router: Router) {
+
+    this.currentUserRoleName = jwtHelper.decodeToken()[ClaimTypes.role]
 
     activatedRoute.params.subscribe((params) => {
-      this.username = params['username']
-      this.isMe = !this.username
+      this.usernameFromRoute = params['username']
 
-      accountService.getUserProfile(this.username)
+      if (this.usernameFromRoute != undefined) {
+        if (this.usernameFromRoute == jwtHelper.decodeToken()[ClaimTypes.nameIdentifier]) {
+          router.navigateByUrl('/u')
+        }
+      } else {
+        this.isMe = true
+      }
+
+      accountService.getUserProfile(this.usernameFromRoute)
         .subscribe(res => {
-          this.user = res
+          this.userProfile = res
           this.setFollowBtnText(res)
+          this.setChangeModBtnText(res)
         })
 
       if (this.isMe) {
@@ -91,7 +109,7 @@ export class ProfileComponent {
           })
       }
 
-      contentService.getUserFeed(new Date(), this.username)
+      contentService.getUserFeed(new Date(), this.usernameFromRoute)
         .subscribe(res => {
           this.posts = res
         })
@@ -150,7 +168,7 @@ export class ProfileComponent {
 
     this.saveBtnLoading.next(true)
 
-    let usernameToUpdate = this.isMe ? null : this.username
+    let usernameToUpdate = this.isMe ? null : this.usernameFromRoute
 
 
     switch (this.currentSettingsTab.value) {
@@ -187,9 +205,9 @@ export class ProfileComponent {
             return EMPTY
           })
         ).subscribe(res => {
-          this.accountService.getUserProfile(this.username)
+          this.accountService.getUserProfile(this.usernameFromRoute)
             .subscribe(res => {
-              this.user = res
+              this.userProfile = res
             })
           this.settingsVisible = false
           this.setUserDate(res)
@@ -268,11 +286,11 @@ export class ProfileComponent {
     if (this.isMe) {
       return
     }
-    if (this.user == null || this.user.follow == null) {
+    if (this.userProfile == null || this.userProfile.follow == null) {
       return
     }
 
-    this.accountService.changeFollow(this.username, !this.user.follow)
+    this.accountService.changeFollow(this.usernameFromRoute, !this.userProfile.follow)
       .pipe(
         catchError(err => {
           showGeneralError(this.messageService, 'There was an error while changing the following status. Please try again later!')
@@ -281,7 +299,7 @@ export class ProfileComponent {
         })
       )
       .subscribe(res => {
-        this.user = res
+        this.userProfile = res
         this.setFollowBtnText(res)
         this.followBtnLoading = false
       })
@@ -297,16 +315,24 @@ export class ProfileComponent {
     }
   }
 
+  setChangeModBtnText(userViewModel: UserProfileViewModel) {
+    if (userViewModel.role == Role.Moderator) {
+      this.changemodBtnText = 'Demote'
+    } else if (userViewModel.role == Role.User) {
+      this.changemodBtnText = 'Promote'
+    }
+  }
+
   showFollowDialog(type: 'follower' | 'following') {
     if (type == 'following') {
       this.showFollowingDialog = true
-      this.accountService.getFollowing(this.username)
+      this.accountService.getFollowing(this.usernameFromRoute)
         .subscribe(res => {
           this.followingUser = res
         })
     } else if (type == 'follower') {
       this.showFollowerDialog = true
-      this.accountService.getFollower(this.username)
+      this.accountService.getFollower(this.usernameFromRoute)
         .subscribe(res => {
           this.followerUser = res
         })
@@ -316,6 +342,35 @@ export class ProfileComponent {
   hideDialog() {
     this.showFollowerDialog = false
     this.showFollowingDialog = false
+  }
+
+  changeMod() {
+    if (this.changemodBtnLoading) {
+      return
+    }
+    if (this.userProfile?.role == Role.User) {
+      this.doRoleUpdate(this.userProfile.username, Role.Moderator)
+    } else if (this.userProfile?.role == Role.Moderator) {
+      this.doRoleUpdate(this.userProfile.username, Role.User)
+    }
+  }
+
+  private doRoleUpdate(username: string, role: Role) {
+    this.changemodBtnLoading = true
+    this.accountService.updateUserRole(username, role)
+      .pipe(
+        catchError(err => {
+          console.error(err);
+          showGeneralError(this.messageService, 'There was an error promoting/demoting this user. Please try again later!')
+          this.changemodBtnLoading = false
+          return EMPTY
+        })
+      )
+      .subscribe(newUserProfile => {
+        this.userProfile = newUserProfile
+        this.setChangeModBtnText(newUserProfile)
+        this.changemodBtnLoading = false
+      })
   }
 }
 
