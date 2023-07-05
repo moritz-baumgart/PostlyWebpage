@@ -16,11 +16,11 @@ import { AccountService, JwtToken } from '../account.service';
 export class StartComponent {
 
   // public
-  publicPosts: PostDTO[] = []
+  publicPosts: PostDTO[] | null = null
   loadingNextPublicPage = false
 
   // private
-  privatePosts: PostDTO[] = []
+  privatePosts: PostDTO[] | null = null
   loadingNextPrivatePage = false
 
   // The jwt of the current logged in user
@@ -63,7 +63,7 @@ export class StartComponent {
             })
           )
           .subscribe((post) => {
-            this.publicPosts.unshift(post)
+            this.publicPosts?.unshift(post)
           })
       })
 
@@ -83,7 +83,7 @@ export class StartComponent {
 
   loadNextPublicPage() {
     this.loadingNextPublicPage = true
-    let oldestPost = this.publicPosts.at(-1)
+    let oldestPost = this.publicPosts?.at(-1)
     if (!oldestPost) {
       showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
       this.loadingNextPublicPage = false
@@ -95,6 +95,7 @@ export class StartComponent {
         catchError((err) => {
           console.error(err);
           showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
+          this.loadingNextPublicPage = false
           return EMPTY
         })
       )
@@ -102,7 +103,11 @@ export class StartComponent {
         if (data.length == 0) {
           showGeneralError(this.messageService, 'No more posts available to load!', 'info', '')
         }
-        this.publicPosts.push(...data)
+        if (this.publicPosts) {
+          this.publicPosts.push(...data)
+        } else {
+          this.publicPosts = data
+        }
         this.loadingNextPublicPage = false
       })
   }
@@ -112,7 +117,7 @@ export class StartComponent {
       return
     }
     this.loadingNextPrivatePage = true
-    let oldestPost = this.privatePosts.at(-1)
+    let oldestPost = this.privatePosts?.at(-1)
     if (!oldestPost) {
       showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
       this.loadingNextPrivatePage = false
@@ -124,6 +129,7 @@ export class StartComponent {
         catchError((err) => {
           console.error(err);
           showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
+          this.loadingNextPrivatePage = false
           return EMPTY
         })
       )
@@ -131,7 +137,11 @@ export class StartComponent {
         if (data.length == 0) {
           showGeneralError(this.messageService, 'No more posts available to load!', 'info', '')
         }
-        this.privatePosts.push(...data)
+        if (this.privatePosts) {
+          this.privatePosts.push(...data)
+        } else {
+          this.privatePosts = data
+        }
         this.loadingNextPrivatePage = false
       })
   }

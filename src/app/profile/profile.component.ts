@@ -31,7 +31,7 @@ export class ProfileComponent {
   changemodBtnLoading = false
   changemodBtnText: string | null = null
 
-  posts: PostDTO[] = []
+  posts: PostDTO[] | null = null
   userProfile: UserProfileViewModel | null = null
   loadingNextPage = false
   isMe = false
@@ -82,10 +82,10 @@ export class ProfileComponent {
   // The jwt of the current user
   currentUserJwt: JwtToken | null = null
 
-  constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, contentService: ContentService, private messageService: MessageService, router: Router) {
+  constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, private contentService: ContentService, private messageService: MessageService, router: Router) {
 
     // Subscribe to jwt changes
-    var sub = accountService.getCurrentUserJwt()
+    accountService.getCurrentUserJwt()
       .subscribe(newJwt => {
         this.currentUserJwt = newJwt
         if (newJwt != null) this.currentUserRoleName = newJwt[ClaimTypes.nameIdentifier]
@@ -146,6 +146,22 @@ export class ProfileComponent {
         this.currentSettingsTab.enable()
       }
     })
+
+    // Subscribe to the new post subject, this fires when the users adds a new post so we can load it to the start of our list.
+    contentService.getNewPostObservable()
+      .subscribe((postId) => {
+        contentService.retrievePost(postId)
+          .pipe(
+            catchError((err) => {
+              console.error(err);
+              showGeneralError(messageService, 'An error occured while loading your newly created post, but it has been added! Please try loading your feed again later!')
+              return EMPTY
+            })
+          )
+          .subscribe((post) => {
+            this.posts?.unshift(post)
+          })
+      })
   }
 
   setUserDate(data: UserDataViewModel) {
@@ -378,6 +394,37 @@ export class ProfileComponent {
         this.userProfile = newUserProfile
         this.setChangeModBtnText(newUserProfile)
         this.changemodBtnLoading = false
+      })
+  }
+
+  loadMore() {
+    this.loadingNextPage = true
+    let oldestPost = this.posts?.at(-1)
+    if (!oldestPost) {
+      showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
+      this.loadingNextPage = false
+      return
+    }
+
+    this.contentService.getUserFeed(new Date(oldestPost.createdAt), this.usernameFromRoute)
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
+          this.loadingNextPage = false
+          return EMPTY
+        })
+      )
+      .subscribe((data) => {
+        if (data.length == 0) {
+          showGeneralError(this.messageService, 'No more posts available to load!', 'info', '')
+        }
+        if (this.posts) {
+          this.posts.push(...data)
+        } else {
+          this.posts = data
+        }
+        this.loadingNextPage = false
       })
   }
 }

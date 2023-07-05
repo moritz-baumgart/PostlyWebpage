@@ -1,10 +1,10 @@
 <p-tabView id="startTabs">
     <!--A tab view with 2 tabs, recommended and following-->
     <p-tabPanel header="Recommended">
-        <app-postlist [posts]="publicPosts" [nextPageLoadingState]="loadingNextPublicPage" (loadNextPage)="loadNextPublicPage()"></app-postlist>
+        <app-postlist [posts]="publicPosts" [nextPageLoadingState]="loadingNextPublicPage" (loadNextPage)="loadNextPublicPage()" emptyMessage="No posts to show here!"></app-postlist>
     </p-tabPanel>
     <p-tabPanel header="Following">
-        <app-postlist *ngIf="currentUserJwt != null" [posts]="privatePosts" [nextPageLoadingState]="loadingNextPrivatePage" (loadNextPage)="loadNextPrivatePage()"></app-postlist>
+        <app-postlist *ngIf="currentUserJwt != null" [posts]="privatePosts" [nextPageLoadingState]="loadingNextPrivatePage" (loadNextPage)="loadNextPrivatePage()" emptyMessage="No posts to show here!"></app-postlist>
         <p-card *ngIf="currentUserJwt == null">You have to be logged in to see posts of users you are following!</p-card>
     </p-tabPanel>
 

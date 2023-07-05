@@ -29,9 +29,12 @@ export class PostlistComponent {
   savedCommentTexts: { [key: number]: string } = {}
 
   // Pagination
-  @Input({ required: true }) posts!: PostDTO[]
+  @Input({ required: true }) posts!: PostDTO[] | null
   @Input({ required: true }) nextPageLoadingState!: boolean
   @Output() loadNextPage = new EventEmitter()
+
+  // This is shown, when posts empty
+  @Input({ required: true }) emptyMessage!: string
 
   skeletonHeights = [8, 14, 20, 25]
 
@@ -42,6 +45,7 @@ export class PostlistComponent {
 
   // Indicates if a post deletion is already in progress
   postDeleteLoading = false
+
 
   constructor(private contentService: ContentService, private messageService: MessageService, private datePipe: DatePipe, private confirmationService: ConfirmationService, accountService: AccountService) {
 
@@ -177,7 +181,7 @@ export class PostlistComponent {
           )
           .subscribe(_ => {
             showGeneralError(this.messageService, 'Post deleted!', 'info', '')
-            this.posts = this.posts.filter(p => p.id != postId)
+            if (this.posts) this.posts = this.posts.filter(p => p.id != postId)
             this.postDeleteLoading = false
           })
       },

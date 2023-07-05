@@ -32,7 +32,7 @@
         <p-skeleton id="followerCount"></p-skeleton>
     </div>
 </div>
-<app-postlist [posts]="posts" [nextPageLoadingState]="loadingNextPage"></app-postlist>
+<app-postlist [posts]="posts" [nextPageLoadingState]="loadingNextPage" (loadNextPage)="loadMore()" emptyMessage="No posts to show here!"></app-postlist>
 
 <p-dialog header="Edit your profile" [modal]="true" [(visible)]="settingsVisible" [style]="{ width: '50vw' }"
     [draggable]="false" [resizable]="false" id="userSettings" [maximizable]="true" [closable]="false"

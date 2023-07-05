@@ -1,4 +1,4 @@
-<div id="skeletonContainer" *ngIf="posts.length == 0">
+<div id="skeletonContainer" *ngIf="posts == null">
     <p-skeleton *ngFor="let height of skeletonHeights" class="skeleton-appear" height="{{height + 'rem'}}" width="100%"></p-skeleton>
 </div>
 <!-- when loading the skeletons above are shown, otherwise the actual posts blow -->
@@ -16,8 +16,10 @@
         </div>
         <app-poststats [post]="post"></app-poststats>
     </div>
-    <p-button label="Load more" *ngIf="posts.length != 0" class="load-more-btn" styleClass="p-button-sm" (click)="requestNextPage()" [loading]="nextPageLoadingState"></p-button>
+    <p-button label="Load more" *ngIf="posts?.length != 0" class="load-more-btn" styleClass="p-button-sm" (click)="requestNextPage()" [loading]="nextPageLoadingState"></p-button>
 </div>
+
+<p-card *ngIf="posts?.length == 0">{{ emptyMessage }}</p-card>
 
 <!-- below is the overlay dialog for a detailed view of posts, it contains the abilitiy to comment, etc. -->
 <p-dialog [header]="postDetails?.header || ''" [(visible)]="postDetailsVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" id="postDetailsDialog" (onHide)="postDetailsHide()" [maximizable]="true">
