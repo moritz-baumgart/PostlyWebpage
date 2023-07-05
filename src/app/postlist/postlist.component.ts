@@ -7,7 +7,9 @@ import { PostDTO } from 'src/DTOs/postdto';
 import { showGeneralError } from 'src/utils';
 import { ContentService } from '../content.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { AccountService } from '../account.service';
+import { AccountService, JwtToken } from '../account.service';
+import { Role } from 'src/DTOs/role';
+import { ClaimTypes } from 'src/DTOs/claimtypes';
 
 @Component({
   selector: 'app-postlist',
@@ -16,10 +18,9 @@ import { AccountService } from '../account.service';
 })
 export class PostlistComponent {
 
+  // Make things available in HTML template
   Array = Array
-
-  // Login state
-  loggedIn: boolean | undefined
+  Role = Role
 
   // Post details
   postDetailsVisible = false
@@ -34,18 +35,31 @@ export class PostlistComponent {
 
   skeletonHeights = [8, 14, 20, 25]
 
+  // The jwt and derived info of the current logged in user
+  currentUserJwt: JwtToken | null = null
+  currentUserName = ''
+  currentUserRoleName = ''
+
+  // Indicates if a post deletion is already in progress
+  postDeleteLoading = false
 
   constructor(private contentService: ContentService, private messageService: MessageService, private datePipe: DatePipe, private confirmationService: ConfirmationService, accountService: AccountService) {
 
     // Randomly shuffles the skeletonHeights array to give the skeletons a random "order"
     this.skeletonHeights = this.skeletonHeights.sort(() => Math.random() - 0.5)
 
-    // Subscribe to login status
-    accountService.isLoggedIn()
-      .subscribe((res) => {
-        this.loggedIn = res
+    // Subscribe to the current jwt observable to get login updates
+    accountService.getCurrentUserJwt()
+      .subscribe(newJwt => {
+        this.currentUserJwt = newJwt
+        if (newJwt != null) {
+          this.currentUserName = newJwt[ClaimTypes.nameIdentifier]
+          this.currentUserRoleName = newJwt[ClaimTypes.role]
+        } else {
+          this.currentUserName = ''
+          this.currentUserRoleName = ''
+        }
       })
-
   }
 
 
@@ -133,6 +147,45 @@ export class PostlistComponent {
 
   requestNextPage() {
     this.loadNextPage.emit()
+  }
+
+  deletePost(event: MouseEvent, postId: number, authorUsername: string) {
+    event.stopPropagation() // Prevent propagation so we dont open the post detail view
+
+    if (this.postDeleteLoading) {
+      return
+    }
+    this.postDeleteLoading = true
+
+    let isSelf = this.currentUserName == authorUsername
+
+    this.confirmationService.confirm({
+      target: event.target!,
+      message: isSelf ? 'Do you really want to DELETE your post?' : 'Do you really want to DELETE THE POST OF @' + authorUsername + '?',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-outlined',
+      accept: () => {
+        this.contentService.deletePost(postId)
+          .pipe(
+            catchError((err) => {
+              showGeneralError(this.messageService, 'There was an error deleting the post. Please try again later!')
+              console.error(err);
+              this.postDeleteLoading = false
+              return EMPTY
+            })
+          )
+          .subscribe(_ => {
+            showGeneralError(this.messageService, 'Post deleted!', 'info', '')
+            this.posts = this.posts.filter(p => p.id != postId)
+            this.postDeleteLoading = false
+          })
+      },
+      reject: () => {
+        this.postDeleteLoading = false
+      }
+    })
+
   }
 }
 

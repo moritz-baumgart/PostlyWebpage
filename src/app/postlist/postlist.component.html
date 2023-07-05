@@ -1,14 +1,16 @@
 <div id="skeletonContainer" *ngIf="posts.length == 0">
-    <p-skeleton *ngFor="let height of skeletonHeights" class="skeleton-appear" height="{{height + 'rem'}}"
-        width="100%"></p-skeleton>
+    <p-skeleton *ngFor="let height of skeletonHeights" class="skeleton-appear" height="{{height + 'rem'}}" width="100%"></p-skeleton>
 </div>
 <!-- when loading the skeletons above are shown, otherwise the actual posts blow -->
 
 <div id="postContainer" class="post">
     <div *ngFor="let post of posts" class="post" (click)="showPostDetails(post)">
         <div class="post-contents">
-            <span *ngIf="post.author.displayName" class="username">{{ post.author.displayName }} (@{{ post.author.username }})</span>
-            <span *ngIf="!post.author.displayName" class="username">@{{ post.author.username }}</span>
+            <div class="post-header">
+                <span *ngIf="post.author.displayName" class="username">{{ post.author.displayName }} (@{{ post.author.username }})</span>
+                <span *ngIf="!post.author.displayName" class="username">@{{ post.author.username }}</span>
+                <i *ngIf="currentUserName == post.author.username || currentUserRoleName == Role[Role.Moderator] || currentUserRoleName == Role[Role.Admin]" class="pi pi-trash del-icon"  [ngClass]="{'hover-scale': !postDeleteLoading}" (click)="deletePost($event, post.id, post.author.username)"></i>
+            </div>
             <span class="post-time">{{ post.createdAt | date:'medium' }}</span>
             <span>{{ post.content }}</span>
         </div>
@@ -34,7 +36,7 @@
             <span>{{ comment.content }}</span>
             <p-divider></p-divider>
         </ng-container>
-        <section *ngIf="loggedIn">
+        <section *ngIf="currentUserJwt != null">
             <span class="p-float-label" id="commentArea">
                 <textarea rows="5" pInputTextarea [formControl]="commentText"></textarea>
                 <label for="float-input">Leave a comment...</label>
@@ -45,7 +47,7 @@
                 <p-button label="Comment" class="comment-btn-margin" styleClass="p-button-sm p-button-success" [disabled]="!commentText.valid || commentText.value == undefined || commentText.value.length == 0" (click)="comment()"></p-button>
             </div>
         </section>
-        <span *ngIf="!loggedIn">Log in to be able to write comments!</span>
+        <span *ngIf="currentUserJwt == null">Log in to be able to write comments!</span>
     </ng-container>
     <ng-container *ngIf="postDetails?.comments == null">
         <div id="commentSkeletonContainer" *ngFor="let _ of Array(4).fill(0)">

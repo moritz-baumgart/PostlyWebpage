@@ -28,6 +28,17 @@
 
             border-bottom: 1px solid var(--surface-border);
 
+            .post-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .del-icon {
+                font-size: 1.2rem;
+                color: var(--red-300);
+            }
+
             .username {
                 font-size: 1.2rem;
                 font-weight: bold;
@@ -54,6 +65,7 @@
 #commentArea {
     width: 100%;
     margin-top: 2rem;
+
     textarea {
         width: 100%;
         height: 100%;
@@ -78,10 +90,12 @@
 }
 
 #commentSkeletonContainer {
+
     // Because this is an overlay our global style does not work here. We need to repeat this.
     p-skeleton {
         opacity: 0;
         animation: appear 500ms 600ms forwards;
+
         @keyframes appear {
             to {
                 opacity: 1;

@@ -5,7 +5,7 @@ import { DatePipe } from '@angular/common';
 import { EMPTY, catchError, pipe } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { showGeneralError } from 'src/utils';
-import { AccountService } from '../account.service';
+import { AccountService, JwtToken } from '../account.service';
 
 @Component({
   selector: 'app-start',
@@ -23,17 +23,18 @@ export class StartComponent {
   privatePosts: PostDTO[] = []
   loadingNextPrivatePage = false
 
-  // login state
-  isLoggedIn = false
+  // The jwt of the current logged in user
+  currentUserJwt: JwtToken | null = null
 
   constructor(private contentService: ContentService, private messageService: MessageService, accountService: AccountService) {
 
-    accountService.isLoggedIn()
-      .subscribe(loggedIn => {
-        this.isLoggedIn = loggedIn
+    // Subscribe to jwt updates
+    accountService.getCurrentUserJwt()
+      .subscribe(newJwt => {
+        this.currentUserJwt = newJwt
 
-        // Fetch the latest private feed, only if logged in
-        if (loggedIn) {
+        // Fetch the latest private feed, only if logged in, else reset the private posts array
+        if (this.currentUserJwt != null) {
           contentService.getPrivateFeed(new Date())
             .pipe(
               catchError(err => {
@@ -45,6 +46,8 @@ export class StartComponent {
             .subscribe((data) => {
               this.privatePosts = data
             })
+        } else {
+          this.privatePosts = []
         }
       })
 
@@ -105,7 +108,7 @@ export class StartComponent {
   }
 
   loadNextPrivatePage() {
-    if (!this.isLoggedIn) {
+    if (this.currentUserJwt == null) {
       return
     }
     this.loadingNextPrivatePage = true

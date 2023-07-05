@@ -139,4 +139,10 @@ export class ContentService {
       this.apiBase + '/post/' + postId + '/vote'
     )
   }
+
+  deletePost(postId: number) {
+    return this.http.delete(
+      this.apiBase + '/post/' + postId
+    )
+  }
 }

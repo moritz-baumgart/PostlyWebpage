@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostDTO } from 'src/DTOs/postdto';
-import { AccountService } from '../account.service';
+import { AccountService, JwtToken } from '../account.service';
 import { ContentService } from '../content.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UserProfileViewModel } from 'src/DTOs/userprofileviewmodel';
@@ -15,7 +15,6 @@ import { Role } from 'src/DTOs/role';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Error } from 'src/DTOs/error';
 import { UserDTO } from 'src/DTOs/userdto';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { ClaimTypes } from 'src/DTOs/claimtypes';
 
 @Component({
@@ -26,7 +25,7 @@ import { ClaimTypes } from 'src/DTOs/claimtypes';
 })
 export class ProfileComponent {
 
-  currentUserRoleName: string
+  currentUserRoleName = ''
   Role = Role
 
   changemodBtnLoading = false
@@ -80,41 +79,50 @@ export class ProfileComponent {
   showFollowerDialog = false
   followerUser: UserDTO[] | null = null
 
-  constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, contentService: ContentService, private messageService: MessageService, jwtHelper: JwtHelperService, router: Router) {
+  // The jwt of the current user
+  currentUserJwt: JwtToken | null = null
 
-    this.currentUserRoleName = jwtHelper.decodeToken()[ClaimTypes.role]
+  constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, contentService: ContentService, private messageService: MessageService, router: Router) {
 
-    activatedRoute.params.subscribe((params) => {
-      this.usernameFromRoute = params['username']
+    // Subscribe to jwt changes
+    var sub = accountService.getCurrentUserJwt()
+      .subscribe(newJwt => {
+        this.currentUserJwt = newJwt
+        if (newJwt != null) this.currentUserRoleName = newJwt[ClaimTypes.nameIdentifier]
 
-      if (this.usernameFromRoute != undefined) {
-        if (this.usernameFromRoute == jwtHelper.decodeToken()[ClaimTypes.nameIdentifier]) {
-          router.navigateByUrl('/u')
-        }
-      } else {
-        this.isMe = true
-      }
+        activatedRoute.params.subscribe((params) => {
+          this.usernameFromRoute = params['username']
 
-      accountService.getUserProfile(this.usernameFromRoute)
-        .subscribe(res => {
-          this.userProfile = res
-          this.setFollowBtnText(res)
-          this.setChangeModBtnText(res)
+          if (this.usernameFromRoute != undefined) {
+            if (this.currentUserJwt != null && this.usernameFromRoute == this.currentUserJwt[ClaimTypes.nameIdentifier]) {
+              router.navigateByUrl('/u')
+            }
+          } else {
+            this.isMe = true
+          }
+
+          accountService.getUserProfile(this.usernameFromRoute)
+            .subscribe(res => {
+              this.userProfile = res
+              this.setFollowBtnText(res)
+              this.setChangeModBtnText(res)
+            })
+
+          if (this.isMe) {
+            accountService.getUserData()
+              .subscribe(res => {
+                this.setUserDate(res)
+              })
+          }
+
+          contentService.getUserFeed(new Date(), this.usernameFromRoute)
+            .subscribe(res => {
+              this.posts = res
+            })
+
         })
+      })
 
-      if (this.isMe) {
-        accountService.getUserData()
-          .subscribe(res => {
-            this.setUserDate(res)
-          })
-      }
-
-      contentService.getUserFeed(new Date(), this.usernameFromRoute)
-        .subscribe(res => {
-          this.posts = res
-        })
-
-    })
 
     this.currentSettingsTab.valueChanges.subscribe(val => {
       switch (val) {

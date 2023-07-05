@@ -1,8 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { EMPTY, catchError, filter } from 'rxjs';
-import { AccountService } from './account.service';
-import { JwtHelperService } from '@auth0/angular-jwt';
+import { AccountService, JwtToken } from './account.service';
 import { ClaimTypes } from 'src/DTOs/claimtypes';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormControl, Validators } from '@angular/forms';
@@ -21,7 +20,6 @@ export class AppComponent {
   title = 'PostlyWebpage';
 
   currentRoute = ''
-  loggedIn: boolean | undefined
   username = ''
   currentRole = ''
 
@@ -34,7 +32,10 @@ export class AppComponent {
 
   @ViewChild('userOverlayPanel') userOverlayPanel!: OverlayPanel
 
-  constructor(private router: Router, private accountService: AccountService, jwtHelper: JwtHelperService, private confirmationService: ConfirmationService, private contentService: ContentService, private messageService: MessageService) {
+  // Jwt of the current user
+  currentUserJwt: JwtToken | null | undefined
+
+  constructor(private router: Router, private accountService: AccountService, private confirmationService: ConfirmationService, private contentService: ContentService, private messageService: MessageService) {
 
     // Listen to router events so we can see the current route inside the component.
     // This little hack is used so we can easily disable the title bar inside e.g. the login or register page, since they are the only pages that dont need them.
@@ -47,15 +48,15 @@ export class AppComponent {
       })
 
 
-    // Inital refresh of the login status
-    accountService.refreshLoginStatus()
+    // Inital refresh of the jwt subject
+    accountService.refreshCurrentJwt()
 
-    accountService.isLoggedIn()
-      .subscribe((res) => {
-        this.loggedIn = res
-        if (this.loggedIn) {
-          this.username = jwtHelper.decodeToken()[ClaimTypes.nameIdentifier]
-          this.currentRole = jwtHelper.decodeToken()[ClaimTypes.role]
+    accountService.getCurrentUserJwt()
+      .subscribe(newJwt => {
+        this.currentUserJwt = newJwt
+        if (newJwt != null) {
+          this.username = newJwt[ClaimTypes.nameIdentifier]
+          this.currentRole = newJwt[ClaimTypes.role]
         }
       })
   }

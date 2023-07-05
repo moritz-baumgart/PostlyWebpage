@@ -9,11 +9,11 @@
       </div>
   </div>
   <div id="headerEnd" class="header-inner">
-    <ng-container *ngIf="loggedIn != undefined && !loggedIn">
+    <ng-container *ngIf="currentUserJwt !== undefined && currentUserJwt == null">
       <p-button label="Login" class="btn-margin" styleClass="p-button-sm" routerLink="/login"></p-button>
       <p-button label="Register" styleClass="p-button-sm" routerLink="/register"></p-button>
     </ng-container>
-    <ng-container *ngIf="loggedIn != undefined && loggedIn">
+    <ng-container *ngIf="currentUserJwt !== undefined && currentUserJwt != null">
       <p-button label="Create post" class="btn-margin" styleClass="p-button-sm" (click)="newPostDialogVisible = true"></p-button>
       <div class="avatar pointer" (click)="userOverlayPanel.toggle($event)">
         <i class="pi pi-user"></i>
@@ -30,7 +30,7 @@
         </div>
       </p-overlayPanel>
     </ng-container>
-    <ng-container *ngIf="loggedIn == undefined">
+    <ng-container *ngIf="currentUserJwt === undefined">
       <p-skeleton class="skeleton-appear" height="100%" width="15rem"></p-skeleton>
     </ng-container>
   </div>

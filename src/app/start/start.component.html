@@ -4,8 +4,8 @@
         <app-postlist [posts]="publicPosts" [nextPageLoadingState]="loadingNextPublicPage" (loadNextPage)="loadNextPublicPage()"></app-postlist>
     </p-tabPanel>
     <p-tabPanel header="Following">
-        <app-postlist *ngIf="isLoggedIn" [posts]="privatePosts" [nextPageLoadingState]="loadingNextPrivatePage" (loadNextPage)="loadNextPrivatePage()"></app-postlist>
-        <p-card *ngIf="!isLoggedIn">You have to be logged in to see posts of users you are following!</p-card>
+        <app-postlist *ngIf="currentUserJwt != null" [posts]="privatePosts" [nextPageLoadingState]="loadingNextPrivatePage" (loadNextPage)="loadNextPrivatePage()"></app-postlist>
+        <p-card *ngIf="currentUserJwt == null">You have to be logged in to see posts of users you are following!</p-card>
     </p-tabPanel>
 
     <!-- p-confirmPopup and p-toast for mounting confirm and toast overlays -->

@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { CookieService } from 'ngx-cookie-service';
 import { EMPTY, ReplaySubject, catchError, of, tap } from 'rxjs';
 import { PasswordUpdateRequest } from 'src/DTOs/passwordupdaterequest';
@@ -24,10 +25,10 @@ export class AccountService {
   })
 
 
-  // This subject represents the login status of the user. It can by refreshed by using the refreshLoginStatus method e.g. when an action is taken that might change its status.
-  private loggedIn = new ReplaySubject<boolean>(1)
+  // This subject represents the current users jwt. It is null if not logged in. It gets refreshed when logging in/out.
+  private currentUserJwt = new ReplaySubject<JwtToken | null>(1)
 
-  constructor(private http: HttpClient, private cookie: CookieService, private router: Router) { }
+  constructor(private http: HttpClient, private cookie: CookieService, private router: Router, private jwtHelper: JwtHelperService) { }
 
   /**
    * This method tries to login a user with given credentials. If the login was successful it also automatically sets the jwt cookie.
@@ -48,7 +49,7 @@ export class AccountService {
       }).pipe(
         tap((res) => {
           this.cookie.set('jwt', res)
-          this.refreshLoginStatus()
+          this.refreshCurrentJwt()
         })
       )
   }
@@ -58,7 +59,7 @@ export class AccountService {
    */
   logout(redirect?: string) {
     this.cookie.delete('jwt')
-    this.refreshLoginStatus()
+    this.refreshCurrentJwt()
     setTimeout(() => {
       if (redirect) this.router.navigateByUrl(redirect)
     }, 500)
@@ -78,7 +79,7 @@ export class AccountService {
   /**
    * This method queries the status endpoint and updates the loggedIn subject based on the response
    */
-  refreshLoginStatus() {
+  refreshCurrentJwt() {
     this.http.get<boolean>(this.apiBase + '/account/status')
       .pipe(
         catchError((err: HttpErrorResponse) => {
@@ -89,16 +90,21 @@ export class AccountService {
           return EMPTY
         })
       )
-      .subscribe((res) => {
-        this.loggedIn.next(res)
+      .subscribe((isLoggedIn) => {
+        if (isLoggedIn) {
+          this.currentUserJwt.next(this.jwtHelper.decodeToken<JwtToken | null>())
+        } else {
+          this.currentUserJwt.next(null)
+        }
+
       })
   }
 
   /**
-   * Returns an observable for the loggIn subject.
+   * Returns an observable for the currentUserJwt subject.
    */
-  isLoggedIn() {
-    return this.loggedIn.asObservable()
+  getCurrentUserJwt() {
+    return this.currentUserJwt.asObservable()
   }
 
   getUserProfile(username?: string) {
@@ -219,3 +225,5 @@ export class AccountService {
     )
   }
 }
+
+export type JwtToken = { [key: string]: any }

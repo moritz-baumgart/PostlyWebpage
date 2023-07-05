@@ -24,10 +24,21 @@ p-skeleton {
     cursor: pointer;
 }
 
+// Hover effect which changes color to the highlight text color
 .highlighthover {
     transition: color 200ms;
-
+    
     &:hover {
         color: var(--highlight-text-color);
     }
+}
+
+// Hover effect which slightly scales the element up
+.hover-scale {
+    transform: scale(1);
+    transition: transform 300ms;
+}
+
+.hover-scale:hover {
+    transform: scale(1.2);
 }
