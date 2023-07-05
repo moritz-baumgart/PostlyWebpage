@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { ReplaySubject, catchError, of, tap } from 'rxjs';
+import { EMPTY, ReplaySubject, catchError, of, tap } from 'rxjs';
 import { PasswordUpdateRequest } from 'src/DTOs/passwordupdaterequest';
 import { RegisterError } from 'src/DTOs/registererror';
 import { Role } from 'src/DTOs/role';
@@ -81,8 +81,12 @@ export class AccountService {
   refreshLoginStatus() {
     this.http.get<boolean>(this.apiBase + '/account/status')
       .pipe(
-        catchError((_) => {
-          return of(false)
+        catchError((err: HttpErrorResponse) => {
+          if (err.status == 401) {
+            return of(false)
+          }
+          console.error(err);
+          return EMPTY
         })
       )
       .subscribe((res) => {
