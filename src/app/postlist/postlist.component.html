@@ -7,8 +7,8 @@
     <div *ngFor="let post of posts" class="post" (click)="showPostDetails(post)">
         <div class="post-contents">
             <div class="post-header">
-                <span *ngIf="post.author.displayName" class="username">{{ post.author.displayName }} (@{{ post.author.username }})</span>
-                <span *ngIf="!post.author.displayName" class="username">@{{ post.author.username }}</span>
+                <span *ngIf="post.author.displayName" class="username pointer highlighthover" [routerLink]="'/u/' + post.author.username">{{ post.author.displayName }} (@{{ post.author.username }})</span>
+                <span *ngIf="!post.author.displayName" class="username pointer highlighthover" [routerLink]="'/u/' + post.author.username">@{{ post.author.username }}</span>
                 <i *ngIf="currentUserName == post.author.username || currentUserRoleName == Role[Role.Moderator] || currentUserRoleName == Role[Role.Admin]" class="pi pi-trash del-icon"  [ngClass]="{'hover-scale': !postDeleteLoading}" (click)="deletePost($event, post.id, post.author.username)"></i>
             </div>
             <span class="post-time">{{ post.createdAt | date:'medium' }}</span>
@@ -22,7 +22,13 @@
 <p-card *ngIf="posts?.length == 0">{{ emptyMessage }}</p-card>
 
 <!-- below is the overlay dialog for a detailed view of posts, it contains the abilitiy to comment, etc. -->
-<p-dialog [header]="postDetails?.header || ''" [(visible)]="postDetailsVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" id="postDetailsDialog" (onHide)="postDetailsHide()" [maximizable]="true">
+<p-dialog [(visible)]="postDetailsVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" id="postDetailsDialog" (onHide)="postDetailsHide()" [maximizable]="true">
+    <ng-template pTemplate="header">
+        <div>
+            <span style="font-weight: 700; font-size: 1.25rem;" class="pointer highlighthover" [routerLink]="'/u/' + postDetails?.linkUsername">{{ postDetails?.headerUsername || '' }}</span>
+            <span style="font-weight: 700; font-size: 1.25rem;">{{ postDetails?.headerDate || '' }}</span>
+        </div>
+    </ng-template>
     <span>{{ postDetails?.content }}</span>
     <app-poststats [post]="postDetails?.post" [paddingLeft]="'0'" [paddingBottom]="'0'"></app-poststats>
     <p-divider></p-divider>
@@ -30,8 +36,8 @@
         <span *ngIf="postDetails?.comments?.length == 0">No comments...</span>
         <ng-container *ngFor="let comment of postDetails?.comments; let i = index">
             <div>
-                <span *ngIf="comment.author.displayName" class="username">{{ comment.author.displayName }} (@{{ comment.author.username }})</span>
-                <span *ngIf="!comment.author.displayName" class="username">@{{ comment.author.username }}</span>
+                <span *ngIf="comment.author.displayName" class="username pointer highlighthover" [routerLink]="'/u/' + comment.author.username">{{ comment.author.displayName }} (@{{ comment.author.username }})</span>
+                <span *ngIf="!comment.author.displayName" class="username pointer highlighthover" [routerLink]="'/u/' + comment.author.username">@{{ comment.author.username }}</span>
                 <span> | </span>
                 <span class="post-time">{{ comment.createdAt | date:'medium' }}</span>
             </div>

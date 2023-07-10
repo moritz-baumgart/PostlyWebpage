@@ -195,7 +195,9 @@ export class PostlistComponent {
 
 class PostDetails {
 
-  header: string;
+  headerUsername: string;
+  headerDate: string;
+  linkUsername: string
   content: string;
   comments: CommentDTO[] | null = null
   post: PostDTO;
@@ -203,11 +205,12 @@ class PostDetails {
   constructor(post: PostDTO, datePipe: DatePipe) {
     this.post = post
     if (post.author.displayName) {
-      this.header = `${post.author.displayName} (@${post.author.username})`
+      this.headerUsername = `${post.author.displayName} (@${post.author.username})`
     } else {
-      this.header = `@${post.author.username}`
+      this.headerUsername = `@${post.author.username}`
     }
-    this.header += ` | ${datePipe.transform(post.createdAt, 'medium')}`
+    this.headerDate = ` | ${datePipe.transform(post.createdAt, 'medium')}`
+    this.linkUsername = post.author.username
     this.content = post.content
   }
 }
