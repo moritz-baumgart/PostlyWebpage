@@ -34,39 +34,18 @@
         </div>
     </p-card>
 
-    <p-chart #userPerDayChart type="line" class="linechart" [data]="userPerDayData" [options]="linechartOptions"></p-chart>
-    <p-card>
-        <div>
-            <h1>{{ newUsersToday }}</h1>
-            <p-skeleton *ngIf="newUsersToday == null" height="2rem" width="7rem"></p-skeleton>
-            <h2>New users today</h2>
-        </div>
-    </p-card>
 
-    <p-chart #loginsPerDayChart type="line" class="linechart" [data]="loginsPerDayData" [options]="linechartOptions"></p-chart>
-    <p-card>
-        <div>
-            <h1>{{ loginsToday }}</h1>
-            <p-skeleton *ngIf="loginsToday == null" height="2rem" width="7rem"></p-skeleton>
-            <h2>Logins today</h2>
+    <ng-container *ngFor="let perDayChart of perDayCharts">
+        <p-chart #perDayChart type="line" class="linechart" [data]="perDayChart.chartData" [options]="linechartOptions"></p-chart>
+        <div style="display: flex; flex-direction: column;">
+            <p-card>
+                <div>
+                    <h1>{{ perDayChart.todayStat }}</h1>
+                    <p-skeleton *ngIf="perDayChart.todayStat == null" height="2rem" width="7rem"></p-skeleton>
+                    <h2>{{ perDayChart.todayTitleText }}</h2>
+                </div>
+            </p-card>
+            <p-button label="Download this charts data" styleClass="p-button-secondary p-button-outlined" [style]="{'width': '100%', 'margin-top': '1rem'}" (click)="download(perDayChart.chartData)"></p-button>
         </div>
-    </p-card>
-
-    <p-chart #postsPerDayChart type="line" class="linechart" [data]="postsPerDayData" [options]="linechartOptions"></p-chart>
-    <p-card>
-        <div>
-            <h1>{{ postsToday }}</h1>
-            <p-skeleton *ngIf="postsToday == null" height="2rem" width="7rem"></p-skeleton>
-            <h2>Posts today</h2>
-        </div>
-    </p-card>
-
-    <p-chart #commentsPerDayChart type="line" class="linechart" [data]="commentsPerDayData" [options]="linechartOptions"></p-chart>
-    <p-card>
-        <div>
-            <h1>{{ commentsToday }}</h1>
-            <p-skeleton *ngIf="commentsToday == null" height="2rem" width="7rem"></p-skeleton>
-            <h2>Comments today</h2>
-        </div>
-    </p-card>
+    </ng-container>
 </div>

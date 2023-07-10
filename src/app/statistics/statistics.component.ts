@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { StatisticsService } from '../statistics.service';
 import { ChartData } from 'chart.js';
 import { UIChart } from 'primeng/chart';
@@ -8,7 +8,7 @@ import { UIChart } from 'primeng/chart';
   templateUrl: './statistics.component.html',
   styleUrls: ['./statistics.component.scss']
 })
-export class StatisticsComponent {
+export class StatisticsComponent implements AfterViewInit {
 
 
   totalUsers: number | null = null;
@@ -17,7 +17,7 @@ export class StatisticsComponent {
   totalComments: number | null = null;
   readonly documentStyle = getComputedStyle(document.documentElement);
 
-  @ViewChild('genderPieChart') genderPieChart!: UIChart
+  @ViewChild('genderPieChart', { static: false }) genderPieChart!: UIChart
   genderPieData: ChartData = {
     labels: [],
     datasets: [
@@ -42,24 +42,33 @@ export class StatisticsComponent {
     }
   }
 
-  @ViewChild('userPerDayChart') userPerDayChart!: UIChart
-  userPerDayData = this.initChartDate('New users/day')
-  newUsersToday: number | null = null
-
-  @ViewChild('loginsPerDayChart') loginsPerDayChart!: UIChart
-  loginsPerDayData = this.initChartDate('Logins/day')
-  loginsToday: number | null = null
-
-  @ViewChild('postsPerDayChart') postsPerDayChart!: UIChart
-  postsPerDayData = this.initChartDate('Posts/day')
-  postsToday: number | null = null
-
-  @ViewChild('commentsPerDayChart') commentsPerDayChart!: UIChart
-  commentsPerDayData = this.initChartDate('Comments/day')
-  commentsToday: number | null = null
-
-
-
+  @ViewChildren('perDayChart') perDayChartElements!: QueryList<UIChart>
+  perDayCharts: PerDayChart[] = [
+    {
+      ref: 'userPerDayChart',
+      chartData: this.initChartDate('New users/day'),
+      todayStat: null,
+      todayTitleText: 'New users today'
+    },
+    {
+      ref: 'loginsPerDayChart',
+      chartData: this.initChartDate('Logins/day'),
+      todayStat: null,
+      todayTitleText: 'Logins today'
+    },
+    {
+      ref: 'postsPerDayChart',
+      chartData: this.initChartDate('Posts/day'),
+      todayStat: null,
+      todayTitleText: 'Posts today'
+    },
+    {
+      ref: 'commentsPerDayChart',
+      chartData: this.initChartDate('Comments/day'),
+      todayStat: null,
+      todayTitleText: 'Comments today'
+    }
+  ]
 
 
   linechartOptions = {
@@ -125,37 +134,21 @@ export class StatisticsComponent {
         this.genderPieChart.refresh()
       })
 
-    this.stats.getUserPerDay()
-      .subscribe(res => {
-        this.userPerDayData.labels = Object.keys(res)
-        this.userPerDayData.datasets[0].data = Object.values(res)
-        this.newUsersToday = this.getTodayStat(res)
-        this.userPerDayChart.refresh()
-      })
-
-    this.stats.getLoginsPerDay()
-      .subscribe(res => {
-        this.loginsPerDayData.labels = Object.keys(res)
-        this.loginsPerDayData.datasets[0].data = Object.values(res)
-        this.loginsToday = this.getTodayStat(res)
-        this.loginsPerDayChart.refresh()
-      })
-
-    this.stats.getPostsPerDay()
-      .subscribe(res => {
-        this.postsPerDayData.labels = Object.keys(res)
-        this.postsPerDayData.datasets[0].data = Object.values(res)
-        this.postsToday = this.getTodayStat(res)
-        this.postsPerDayChart.refresh()
-      })
-
-    this.stats.getCommentsPerDay()
-      .subscribe(res => {
-        this.commentsPerDayData.labels = Object.keys(res)
-        this.commentsPerDayData.datasets[0].data = Object.values(res)
-        this.commentsToday = this.getTodayStat(res)
-        this.commentsPerDayChart.refresh()
-      })
+    const statObservables = [
+      this.stats.getUserPerDay(),
+      this.stats.getLoginsPerDay(),
+      this.stats.getPostsPerDay(),
+      this.stats.getCommentsPerDay()
+    ]
+    for (let i = 0; i <= 3; i++) {
+      statObservables[i] //TODO: Handle err
+        .subscribe(res => {
+          this.perDayCharts[i].chartData.labels = Object.keys(res)
+          this.perDayCharts[i].chartData.datasets[0].data = Object.values(res)
+          this.perDayCharts[i].todayStat = this.getTodayStat(res)
+          this.perDayChartElements.toArray()[i].refresh()
+        })
+    }
   }
 
   getTodayStat(val: { [datetimeString: string]: number }) {
@@ -194,4 +187,29 @@ export class StatisticsComponent {
     }
     return chartDate
   }
+
+  download(chartData: ChartData) {
+    let csvContent = 'data:text/csv;charset=utf-8,Date,Amount\n'
+    let counter = 0
+    chartData.labels?.forEach(label => {
+      csvContent += `${label},${chartData.datasets[0].data[counter]}\n`
+      counter++
+    })
+    let encodedUri = encodeURI(csvContent);
+    let link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `${chartData.datasets[0].label}.csv`);
+    document.body.appendChild(link);
+    link.addEventListener('click', function () {
+      document.body.removeChild(link);
+    });
+    link.click();
+  }
+}
+
+interface PerDayChart {
+  ref: string
+  chartData: ChartData,
+  todayStat: number | null
+  todayTitleText: string
 }
