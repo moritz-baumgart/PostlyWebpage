@@ -25,6 +25,7 @@
             <li routerLink="/" (click)="userOverlayPanel.hide()" class="pointer">Start</li>
             <li routerLink="/u" (click)="userOverlayPanel.hide()" class="pointer">Your profile</li>
             <li *ngIf="currentRole == Role[Role.Moderator] || currentRole == Role[Role.Admin]" routerLink="/stats" (click)="userOverlayPanel.hide()" class="pointer">Statistics</li>
+            <li *ngIf="currentRole == Role[Role.Admin]" routerLink="/admin" (click)="userOverlayPanel.hide()" class="pointer">Admin Tools</li>
           </ul>
           <p-button label="Logout" styleClass="p-button-sm" (click)="logout()"></p-button>
         </div>

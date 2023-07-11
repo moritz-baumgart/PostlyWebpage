@@ -88,7 +88,7 @@ export class ProfileComponent {
     accountService.getCurrentUserJwt()
       .subscribe(newJwt => {
         this.currentUserJwt = newJwt
-        if (newJwt != null) this.currentUserRoleName = newJwt[ClaimTypes.nameIdentifier]
+        if (newJwt != null) this.currentUserRoleName = newJwt[ClaimTypes.role]
 
         activatedRoute.params.subscribe((params) => {
           this.usernameFromRoute = params['username']

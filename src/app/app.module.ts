@@ -18,6 +18,7 @@ import { PostlistComponent } from './postlist/postlist.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { UserlistComponent } from './userlist/userlist.component';
 import { SearchComponent } from './search/search.component';
+import { AdminComponent } from './admin/admin.component';
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -36,6 +37,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { TooltipModule } from 'primeng/tooltip';
+import { AccordionModule } from 'primeng/accordion';
+import { TableModule } from 'primeng/table';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -59,7 +62,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     PostlistComponent,
     StatisticsComponent,
     UserlistComponent,
-    SearchComponent
+    SearchComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,
@@ -91,7 +95,9 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     DropdownModule,
     CardModule,
     ChartModule,
-    TooltipModule
+    TooltipModule,
+    AccordionModule,
+    TableModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

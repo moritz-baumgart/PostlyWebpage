@@ -6,6 +6,7 @@ import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { SearchComponent } from './search/search.component';
+import { AdminComponent } from './admin/admin.component';
 
 const routes: Routes = [
   { path: '', component: StartComponent },
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'u/:username', component: ProfileComponent },
   { path: 'u', component: ProfileComponent },
   { path: 'stats', component: StatisticsComponent },
-  { path: 's', component: SearchComponent }
+  { path: 's', component: SearchComponent },
+  { path: 'admin', component: AdminComponent }
 ];
 
 @NgModule({
