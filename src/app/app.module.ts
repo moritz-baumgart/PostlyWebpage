@@ -39,6 +39,7 @@ import { ChartModule } from 'primeng/chart';
 import { TooltipModule } from 'primeng/tooltip';
 import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -97,7 +98,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     ChartModule,
     TooltipModule,
     AccordionModule,
-    TableModule
+    TableModule,
+    ConfirmDialogModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

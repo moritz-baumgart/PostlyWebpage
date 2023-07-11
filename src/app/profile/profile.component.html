@@ -4,6 +4,7 @@
             <i class="pi pi-user"></i>
         </div>
         <div id="userActionButtons">
+            <p-button *ngIf="isMe || (currentUserRoleName == Role[Role.Admin] || currentUserRoleName == Role[Role.Moderator])" (click)="deleteAcc()" [loading]="deleteAccBtnLoading" icon="pi pi-trash" styleClass="p-button-danger"></p-button>
             <p-button *ngIf="!isMe && currentUserRoleName == Role[Role.Admin] && changemodBtnText != null" (click)="changeMod()" [loading]="changemodBtnLoading">{{ changemodBtnText }}</p-button>
             <p-button *ngIf="!isMe && followBtnText != null" (click)="follow()" [loading]="followBtnLoading">{{ followBtnText }}</p-button>
             <p-button *ngIf="isMe" icon="pi pi-user-edit" (click)="settingsVisible = true"></p-button>
@@ -100,12 +101,29 @@
     </div>
 </p-dialog>
 
+<!-- Following and followers dialogs -->
 <p-dialog header="Following" [modal]="true" [(visible)]="showFollowingDialog" [style]="{ width: '50vw', 'max-height': '50vh' }" [closable]="true">
     <app-userlist [users]="followingUser" emptyMessage="Looks really empty in here!" (hideDialog)="hideDialog()"></app-userlist>
 </p-dialog>
 <p-dialog header="Followers" [modal]="true" [(visible)]="showFollowerDialog" [style]="{ width: '50vw', 'max-height': '50vh' }" [closable]="true">
     <app-userlist [users]="followerUser"  emptyMessage="Looks really empty in here!" (hideDialog)="hideDialog()"></app-userlist>
 </p-dialog>
+
+<!-- delete account dialog -->
+<p-confirmDialog #deleteAccDialog key="deleteAccConfirm">
+    <ng-template pTemplate="header">
+        <div style="display: flex; flex-direction: column;">
+            <h3>DELETE Account?</h3>
+            <h4>Do you really want to <em>delete</em> this account?</h4>
+            <h4>Please entet the account's username below to proceed:</h4>
+            <input type="text" pInputText [formControl]="accDelConfirmUsername"/>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" class="p-button-success" label="Cancel" (click)="deleteAccDialog.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" class="p-button-danger" label="Delete account" (click)="deleteAccDialog.accept()" [disabled]="deleteBtnDisabled"></button>
+    </ng-template>
+</p-confirmDialog>
 
 <!-- p-toast for mounting toasts -->
 <p-toast></p-toast>

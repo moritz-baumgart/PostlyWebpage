@@ -8,7 +8,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UserProfileViewModel } from 'src/DTOs/userprofileviewmodel';
 import { UserDataViewModel } from 'src/DTOs/userdataviewmodel';
 import { Gender } from 'src/DTOs/gender';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { BehaviorSubject, EMPTY, catchError } from 'rxjs';
 import { showGeneralError } from 'src/utils';
 import { Role } from 'src/DTOs/role';
@@ -82,7 +82,11 @@ export class ProfileComponent {
   // The jwt of the current user
   currentUserJwt: JwtToken | null = null
 
-  constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, private contentService: ContentService, private messageService: MessageService, router: Router) {
+  deleteAccBtnLoading = false
+  accDelConfirmUsername = new FormControl('')
+  deleteBtnDisabled = true
+
+  constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, private contentService: ContentService, private messageService: MessageService, private router: Router, private confirmationService: ConfirmationService) {
 
     // Subscribe to jwt changes
     accountService.getCurrentUserJwt()
@@ -162,6 +166,12 @@ export class ProfileComponent {
             this.posts?.unshift(post)
           })
       })
+
+    this.accDelConfirmUsername.valueChanges
+      .subscribe(newVal => {
+        this.deleteBtnDisabled = newVal?.toUpperCase() != this.userProfile?.username.toUpperCase()
+      })
+
   }
 
   setUserDate(data: UserDataViewModel) {
@@ -426,6 +436,29 @@ export class ProfileComponent {
         }
         this.loadingNextPage = false
       })
+  }
+
+  deleteAcc() {
+    this.confirmationService.confirm({
+      key: 'deleteAccConfirm',
+      accept: () => {
+        if (!this.userProfile?.username) {
+          return
+        }
+        this.accountService.deleteUser(this.userProfile.username, this.isMe)
+          .pipe(
+            catchError(err => {
+              showGeneralError(this.messageService, "An error occured while deleting this accoung. Please try again later!")
+              console.error(err);
+              return EMPTY
+            })
+          )
+          .subscribe(() => {
+            showGeneralError(this.messageService, "Account deleted!", "info", "")
+            this.router.navigateByUrl('/')
+          })
+      }
+    })
   }
 }
 

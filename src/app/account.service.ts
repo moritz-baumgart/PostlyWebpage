@@ -224,6 +224,17 @@ export class AccountService {
       }
     )
   }
+
+  deleteUser(username: string, isMe: boolean) {
+    return this.http.delete(this.apiBase + '/account/' + username)
+      .pipe(
+        tap(() => {
+          if (isMe) {
+            this.logout()
+          }
+        })
+      )
+  }
 }
 
 export type JwtToken = { [key: string]: any }
