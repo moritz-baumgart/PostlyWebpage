@@ -10,6 +10,7 @@ export interface UserDataViewModel {
     role: Role;
     birthday: Date | null;
     gender: Gender | null;
+    profileImageUrl: string | null;
     // Private:
     email: string | null;
     phoneNumber: string | null;

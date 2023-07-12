@@ -57,6 +57,7 @@ export class ProfileComponent {
     displayName: null,
     email: null,
     gender: null,
+    profileImageUrl: null,
     id: -1,
     phoneNumber: null,
     role: Role.User,

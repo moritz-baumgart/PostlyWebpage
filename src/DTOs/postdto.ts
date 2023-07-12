@@ -6,9 +6,10 @@ export interface PostDTO {
     content: string
     author: UserDTO
     createdAt: Date
+    attachedImageUrl: string | null
     upvoteCount: number
     downvoteCount: number
     commentCount: number
     vote: VoteType | null
-    hasCommented?: boolean
+    hasCommented: boolean | null
 }

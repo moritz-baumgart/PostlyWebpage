@@ -3,6 +3,7 @@ export enum Error {
     UserNotFound,
     PostNotFound,
     CommentNotFound,
+    ImageNotFound,
     UsernameAlreadyInUse,
     CharacterLimitExceeded,
     InteractionAlreadyMade,
