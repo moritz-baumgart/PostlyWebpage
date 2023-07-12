@@ -10,6 +10,7 @@ import { showGeneralError } from 'src/utils';
 import { Role } from 'src/DTOs/role';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { environment } from 'src/environments/environment';
+import { FileUpload } from 'primeng/fileupload';
 
 @Component({
   selector: 'app-root',
@@ -35,6 +36,9 @@ export class AppComponent {
   newPostText = new FormControl('', Validators.maxLength(282))
 
   searchQuery = new FormControl('', { nonNullable: true })
+
+  @ViewChild('postFileUpload') postFileUpload!: FileUpload
+  fileToUpload: File | null = null
 
   @ViewChild('userOverlayPanel') userOverlayPanel!: OverlayPanel
 
@@ -103,11 +107,46 @@ export class AppComponent {
           return EMPTY
         })
       )
-      .subscribe((res) => {
-        this.newPostDialogVisible = false
-        this.newPostText.setValue('')
-        showGeneralError(this.messageService, 'Post created!', 'success', '')
+      .subscribe((postId) => {
+
+        if (this.fileToUpload != null) {
+          this.contentService.addImageToPost(postId, this.fileToUpload)
+            .pipe(
+              catchError(err => {
+                this.newPostDialogVisible = false
+                this.newPostText.setValue('')
+                showGeneralError(this.messageService, 'Error adding the image to the post! Your post was still created but without an image.')
+                console.error(err);
+                return EMPTY
+              })
+            )
+            .subscribe(_ => {
+              this.handlePostCreated(postId)
+            })
+        } else {
+          this.handlePostCreated(postId)
+        }
       })
+  }
+
+  private handlePostCreated(postId: number) {
+    this.contentService.newPostCreatedSubject.next(postId)
+    this.newPostDialogVisible = false
+    this.newPostText.setValue('')
+    this.clearFile()
+    showGeneralError(this.messageService, 'Post created!', 'success', '')
+  }
+
+  onFileSelect(event: FileSelectEvent) {
+    const file = event.currentFiles[0]
+    if (file) {
+      this.fileToUpload = file
+    }
+  }
+
+  clearFile() {
+    this.fileToUpload = null
+    this.postFileUpload.clear()
   }
 
   search() {
@@ -119,4 +158,10 @@ export class AppComponent {
   profilePictureError() {
     this.profilePictureUrl = null
   }
+}
+
+interface FileSelectEvent {
+  originalEvent: Event
+  files: File[]
+  currentFiles: File[]
 }

@@ -41,6 +41,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AvatarModule } from 'primeng/avatar';
+import { FileUploadModule } from 'primeng/fileupload';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -101,7 +102,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     AccordionModule,
     TableModule,
     ConfirmDialogModule,
-    AvatarModule
+    AvatarModule,
+    FileUploadModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

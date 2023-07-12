@@ -23,7 +23,7 @@ export class ContentService {
   })
 
 
-  private newPostCreatedSubject = new Subject<number>()
+  newPostCreatedSubject = new Subject<number>()
 
   constructor(private http: HttpClient) { }
 
@@ -99,11 +99,13 @@ export class ContentService {
         headers: this.jsonHeaders
       }
     )
-      .pipe(
-        tap((res) => {
-          this.newPostCreatedSubject.next(res)
-        })
-      )
+  }
+
+  addImageToPost(postId: number, image: File) {
+    const formData = new FormData()
+    formData.append('image', image)
+
+    return this.http.put(this.apiBase + '/image/post/' + postId, formData)
   }
 
   /**

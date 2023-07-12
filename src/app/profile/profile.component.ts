@@ -168,7 +168,12 @@ export class ProfileComponent {
             })
           )
           .subscribe((post) => {
-            this.posts?.unshift(post)
+            if(this.posts != null) {
+              this.posts.unshift(post)
+              this.posts = [...this.posts]
+            } else {
+              this.posts = [post]
+            }
           })
       })
 

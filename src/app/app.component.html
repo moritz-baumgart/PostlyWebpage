@@ -45,6 +45,9 @@
     <label for="float-input">Tell us, what's on your mind!</label>
   </span>
   <div id="postButtonContainer">
+      <p-fileUpload #postFileUpload mode="basic" class="left-btn" chooseLabel="Attach image" name="demo[]" accept="image/*" styleClass="p-button-sm p-button-info" (onSelect)="onFileSelect($event)"></p-fileUpload>
+      <p-button *ngIf="fileToUpload != null" icon="pi pi-times" class="left-btn" styleClass="p-button-sm p-button-danger" (click)="clearFile()"></p-button>
+      <div style="margin-right: auto;"></div>
       <span class="post-btn-margin" [style.color]="!newPostText.valid ? 'var(--red-500)' : ''">{{ newPostText.value?.length ?? 0 }}/282</span>
       <p-button label="Discard" class="post-btn-margin" styleClass="p-button-sm p-button-danger p-button-outlined" (click)="discardPost($event)"></p-button>
       <p-button label="Post" class="post-btn-margin" styleClass="p-button-sm p-button-success" [disabled]="!newPostText.valid || newPostText.value == undefined || newPostText.value.length == 0" (click)="createNewPost()"></p-button>

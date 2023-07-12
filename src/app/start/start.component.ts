@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { ContentService } from '../content.service';
 import { PostDTO } from 'src/DTOs/postdto';
 import { DatePipe } from '@angular/common';
@@ -63,7 +63,12 @@ export class StartComponent {
             })
           )
           .subscribe((post) => {
-            this.publicPosts?.unshift(post)
+            if(this.publicPosts != null) {
+              this.publicPosts.unshift(post)
+              this.publicPosts = [...this.publicPosts]
+            } else {
+              this.publicPosts = [post]
+            }
           })
       })
 
