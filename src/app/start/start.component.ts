@@ -84,13 +84,14 @@ export class StartComponent {
   loadNextPublicPage() {
     this.loadingNextPublicPage = true
     let oldestPost = this.publicPosts?.at(-1)
-    if (!oldestPost) {
-      showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
-      this.loadingNextPublicPage = false
-      return
+    let oldestDate
+    if (oldestPost) {
+      oldestDate = new Date(oldestPost.createdAt)
+    } else {
+      oldestDate = new Date()
     }
 
-    this.contentService.getPublicFeed(new Date(oldestPost.createdAt))
+    this.contentService.getPublicFeed(oldestDate)
       .pipe(
         catchError((err) => {
           console.error(err);
@@ -118,13 +119,14 @@ export class StartComponent {
     }
     this.loadingNextPrivatePage = true
     let oldestPost = this.privatePosts?.at(-1)
-    if (!oldestPost) {
-      showGeneralError(this.messageService, 'An error occured while loading more posts, please try again later!')
-      this.loadingNextPrivatePage = false
-      return
+    let oldestDate
+    if (oldestPost) {
+      oldestDate = new Date(oldestPost.createdAt)
+    } else {
+      oldestDate = new Date()
     }
 
-    this.contentService.getPrivateFeed(new Date(oldestPost.createdAt))
+    this.contentService.getPrivateFeed(oldestDate)
       .pipe(
         catchError((err) => {
           console.error(err);
