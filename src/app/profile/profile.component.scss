@@ -86,23 +86,8 @@
 }
 
 .avatar {
-    aspect-ratio: 1;
-    background-color: #3e4053;
-
     height: 10rem;
-
-    border-radius: 13%;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background-repeat: no-repeat;
-    background-size: cover;
-
-    i {
-        font-size: 100%;
-    }
+    width: 10rem;
 }
 
 #userSettings {

@@ -22,16 +22,17 @@
         }
 
         .post-contents {
-            padding: 1rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 1rem;
             display: flex;
             flex-direction: column;
-
-            border-bottom: 1px solid var(--surface-border);
 
             .post-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                margin-bottom: 0.5rem;
             }
 
             .del-icon {

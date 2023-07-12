@@ -9,6 +9,7 @@ import { ContentService } from './content.service';
 import { showGeneralError } from 'src/utils';
 import { Role } from 'src/DTOs/role';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -17,11 +18,16 @@ import { OverlayPanel } from 'primeng/overlaypanel';
   providers: [ConfirmationService, MessageService]
 })
 export class AppComponent {
+
+  // Make things available in the template
+  env = environment
+
   title = 'PostlyWebpage';
 
   currentRoute = ''
   username = ''
   currentRole = ''
+  profilePictureUrl: string | null = null
 
   Role = Role
 
@@ -57,6 +63,7 @@ export class AppComponent {
         if (newJwt != null) {
           this.username = newJwt[ClaimTypes.nameIdentifier]
           this.currentRole = newJwt[ClaimTypes.role]
+          this.profilePictureUrl = environment.apiBase + '/image/user/' + this.username
         }
       })
   }
@@ -107,5 +114,9 @@ export class AppComponent {
     if (this.searchQuery.value.length > 0) {
       this.router.navigateByUrl('/s?q=' + this.searchQuery.value)
     }
+  }
+
+  profilePictureError() {
+    this.profilePictureUrl = null
   }
 }

@@ -1,8 +1,7 @@
 <div *ngIf="userProfile" id="profileOverview">
     <div id="profileSection">
-        <div class="avatar">
-            <i class="pi pi-user"></i>
-        </div>
+        <p-avatar *ngIf="userProfile.profileImageUrl != null" [style]="{'width': '10rem', 'height': '10rem'}" class="postlyAvatarBorder" [image]="env.apiBase + userProfile.profileImageUrl"></p-avatar>
+        <p-avatar *ngIf="userProfile.profileImageUrl == null" [style]="{'width': '10rem', 'height': '10rem'}" icon="pi pi-user"></p-avatar>
         <div id="userActionButtons">
             <p-button *ngIf="isMe || (currentUserRoleName == Role[Role.Admin] || currentUserRoleName == Role[Role.Moderator])" (click)="deleteAcc()" [loading]="deleteAccBtnLoading" icon="pi pi-trash" styleClass="p-button-danger"></p-button>
             <p-button *ngIf="!isMe && currentUserRoleName == Role[Role.Admin] && changemodBtnText != null" (click)="changeMod()" [loading]="changemodBtnLoading">{{ changemodBtnText }}</p-button>

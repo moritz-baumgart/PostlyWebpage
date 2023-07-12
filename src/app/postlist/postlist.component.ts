@@ -10,6 +10,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { AccountService, JwtToken } from '../account.service';
 import { Role } from 'src/DTOs/role';
 import { ClaimTypes } from 'src/DTOs/claimtypes';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-postlist',
@@ -21,6 +22,7 @@ export class PostlistComponent {
   // Make things available in HTML template
   Array = Array
   Role = Role
+  env = environment
 
   // Post details
   postDetailsVisible = false
@@ -201,6 +203,8 @@ class PostDetails {
   content: string;
   comments: CommentDTO[] | null = null
   post: PostDTO;
+  profileImageUrl: string | null = null
+  attachedImageUrl: string | null = null
 
   constructor(post: PostDTO, datePipe: DatePipe) {
     this.post = post
@@ -212,5 +216,7 @@ class PostDetails {
     this.headerDate = ` | ${datePipe.transform(post.createdAt, 'medium')}`
     this.linkUsername = post.author.username
     this.content = post.content
+    this.profileImageUrl = post.author.profileImageUrl
+    this.attachedImageUrl = post.attachedImageUrl
   }
 }

@@ -15,8 +15,9 @@
     </ng-container>
     <ng-container *ngIf="currentUserJwt !== undefined && currentUserJwt != null">
       <p-button label="Create post" class="btn-margin" styleClass="p-button-sm" (click)="newPostDialogVisible = true"></p-button>
-      <div class="avatar pointer" (click)="userOverlayPanel.toggle($event)">
-        <i class="pi pi-user"></i>
+      <div class="pointer" (click)="userOverlayPanel.toggle($event)" style="display: flex; align-items: center;">
+        <p-avatar *ngIf="profilePictureUrl != null" class="postlyAvatarBorder"  [image]="profilePictureUrl" (onImageError)="profilePictureError()" [ngStyle]="{'height': '2.438rem', 'width': '2.438rem'}" [style]="{'height': '2.438rem', 'width': '2.438rem'}"></p-avatar>
+        <p-avatar *ngIf="profilePictureUrl == null" icon="pi pi-user" [style]="{'height': '2.438rem', 'width': '2.438rem'}"></p-avatar>
       </div>
       <p-overlayPanel #userOverlayPanel id="userMenuOverlay">
         <div class="user-overlay-panel">

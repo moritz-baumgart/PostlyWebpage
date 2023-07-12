@@ -16,6 +16,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Error } from 'src/DTOs/error';
 import { UserDTO } from 'src/DTOs/userdto';
 import { ClaimTypes } from 'src/DTOs/claimtypes';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -25,8 +26,11 @@ import { ClaimTypes } from 'src/DTOs/claimtypes';
 })
 export class ProfileComponent {
 
-  currentUserRoleName = ''
+  // Make things available in template
   Role = Role
+  env = environment
+
+  currentUserRoleName = ''
 
   changemodBtnLoading = false
   changemodBtnText: string | null = null

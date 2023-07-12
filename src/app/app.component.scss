@@ -31,20 +31,9 @@ header {
         margin-right: 1.5rem;
     }
 
-    .avatar {
-        height: 100%;
-        aspect-ratio: 1;
-
-        background-color: #3e4053;
-
-        border-radius: 13%;
-
+    .header-inner {
         display: flex;
-        justify-content: center;
         align-items: center;
-
-        background-repeat: no-repeat;
-        background-size: cover;
     }
 }
 

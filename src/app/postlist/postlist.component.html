@@ -7,16 +7,23 @@
     <div *ngFor="let post of posts" class="post" (click)="showPostDetails(post)">
         <div class="post-contents">
             <div class="post-header">
-                <span *ngIf="post.author.displayName" class="username pointer highlighthover" [routerLink]="'/u/' + post.author.username">{{ post.author.displayName }} (@{{ post.author.username }})</span>
-                <span *ngIf="!post.author.displayName" class="username pointer highlighthover" [routerLink]="'/u/' + post.author.username">@{{ post.author.username }}</span>
+                <div class="pointer highlighthover" [routerLink]="'/u/' + post.author.username" style="display: flex; align-items: center;">
+                    <p-avatar *ngIf="post.author.profileImageUrl" class="postlyAvatarBorder" [image]="env.apiBase + post.author.profileImageUrl" [ngStyle]="{'margin-right': '1rem'}"></p-avatar>
+                    <p-avatar *ngIf="post.author.profileImageUrl == null" icon="pi pi-user" [ngStyle]="{'margin-right': '1rem'}"></p-avatar>
+                    <span *ngIf="post.author.displayName" class="username">{{ post.author.displayName }} (@{{ post.author.username }})</span>
+                    <span *ngIf="!post.author.displayName" class="username">@{{ post.author.username }}</span>
+                </div>
                 <i *ngIf="currentUserName == post.author.username || currentUserRoleName == Role[Role.Moderator] || currentUserRoleName == Role[Role.Admin]" class="pi pi-trash del-icon"  [ngClass]="{'hover-scale': !postDeleteLoading}" (click)="deletePost($event, post.id, post.author.username)"></i>
             </div>
             <span class="post-time">{{ post.createdAt | date:'medium' }}</span>
             <span>{{ post.content }}</span>
+            <p-divider *ngIf="post.attachedImageUrl != null"></p-divider>
+            <img *ngIf="post.attachedImageUrl != null" [src]="env.apiBase + post.attachedImageUrl" style="width: 100%;">
+            <p-divider [style]="{'margin': '1rem 0'}"></p-divider>
         </div>
-        <app-poststats [post]="post"></app-poststats>
+        <app-poststats [post]="post" paddingTop="0"></app-poststats>
     </div>
-    <p-card *ngIf="posts?.length == 0" style="width: 100%;">{{ emptyMessage }}</p-card>
+    <p-card *ngIf="posts?.length == 0" width [ngStyle]="{'width': '100%'}">{{ emptyMessage }}</p-card>
     <p-button label="Load more" *ngIf="posts != null" class="load-more-btn" styleClass="p-button-sm" (click)="requestNextPage()" [loading]="nextPageLoadingState"></p-button>
 </div>
 
@@ -24,18 +31,25 @@
 <!-- below is the overlay dialog for a detailed view of posts, it contains the abilitiy to comment, etc. -->
 <p-dialog [(visible)]="postDetailsVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" id="postDetailsDialog" (onHide)="postDetailsHide()" [maximizable]="true">
     <ng-template pTemplate="header">
-        <div>
+        <div style="display: flex; align-items: center;">
+            <p-avatar *ngIf="postDetails?.profileImageUrl" class="postlyAvatarBorder" [image]="env.apiBase + postDetails?.profileImageUrl" [ngStyle]="{'margin-right': '1rem'}"></p-avatar>
+            <p-avatar *ngIf="postDetails?.profileImageUrl == null" icon="pi pi-user" [ngStyle]="{'margin-right': '1rem'}"></p-avatar>
             <span style="font-weight: 700; font-size: 1.25rem;" class="pointer highlighthover" [routerLink]="'/u/' + postDetails?.linkUsername">{{ postDetails?.headerUsername || '' }}</span>
             <span style="font-weight: 700; font-size: 1.25rem;">{{ postDetails?.headerDate || '' }}</span>
         </div>
     </ng-template>
     <span>{{ postDetails?.content }}</span>
-    <app-poststats [post]="postDetails?.post" [paddingLeft]="'0'" [paddingBottom]="'0'"></app-poststats>
+    <p-divider *ngIf="postDetails?.attachedImageUrl != null"></p-divider>
+    <img *ngIf="postDetails?.attachedImageUrl != null" [src]="env.apiBase + postDetails?.attachedImageUrl" style="width: 100%;">
+    <p-divider [style]="{'margin': '1rem 0'}"></p-divider>
+    <app-poststats [post]="postDetails?.post" paddingLeft="0" paddingBottom="0" paddingTop="0" paddingRight="0"></app-poststats>
     <p-divider></p-divider>
     <ng-container *ngIf="postDetails?.comments">
         <span *ngIf="postDetails?.comments?.length == 0">No comments...</span>
         <ng-container *ngFor="let comment of postDetails?.comments; let i = index">
-            <div>
+            <div style="margin-bottom: 0.5rem; display: flex; align-items: center;">
+                <p-avatar *ngIf="comment.author.profileImageUrl" class="postlyAvatarBorder" [image]="env.apiBase + comment.author.profileImageUrl" [ngStyle]="{'margin-right': '1rem'}"></p-avatar>
+                <p-avatar *ngIf="comment.author.profileImageUrl == null" icon="pi pi-user" [ngStyle]="{'margin-right': '1rem'}"></p-avatar>
                 <span *ngIf="comment.author.displayName" class="username pointer highlighthover" [routerLink]="'/u/' + comment.author.username">{{ comment.author.displayName }} (@{{ comment.author.username }})</span>
                 <span *ngIf="!comment.author.displayName" class="username pointer highlighthover" [routerLink]="'/u/' + comment.author.username">@{{ comment.author.username }}</span>
                 <span> | </span>

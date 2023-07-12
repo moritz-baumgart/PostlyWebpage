@@ -40,6 +40,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { AvatarModule } from 'primeng/avatar';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -99,7 +100,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     TooltipModule,
     AccordionModule,
     TableModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    AvatarModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
