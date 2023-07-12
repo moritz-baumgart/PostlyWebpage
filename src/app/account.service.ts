@@ -235,6 +235,19 @@ export class AccountService {
         })
       )
   }
+
+  changeUserProfileImage(username: string, image: File) {
+    const formData = new FormData()
+    formData.append('image', image)
+
+    return this.http.put(this.apiBase + '/image/user/' + username, formData)
+  }
+
+  deleteUserProfileImage(username: string) {
+    throw new Error("not Implemented")
+    // TODO:
+    //return this.http.delete(this.apiBase + '/image/user/' + username)
+  }
 }
 
 export type JwtToken = { [key: string]: any }

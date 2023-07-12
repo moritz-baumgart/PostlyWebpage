@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostDTO } from 'src/DTOs/postdto';
 import { AccountService, JwtToken } from '../account.service';
@@ -17,6 +17,9 @@ import { Error } from 'src/DTOs/error';
 import { UserDTO } from 'src/DTOs/userdto';
 import { ClaimTypes } from 'src/DTOs/claimtypes';
 import { environment } from 'src/environments/environment';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { FileSelectEvent } from 'src/DTOs/fileselectevent';
+import { FileUpload } from 'primeng/fileupload';
 
 @Component({
   selector: 'app-profile',
@@ -90,6 +93,14 @@ export class ProfileComponent {
   deleteAccBtnLoading = false
   accDelConfirmUsername = new FormControl('')
   deleteBtnDisabled = true
+
+  // Image cropper
+  originalProfileImageFile: File | null = null
+  croppedProfileImage: Blob | null = null
+  profileImageChangeDialogVisible = false
+  @ViewChild('profileImageFileUpload') profileImageFileUpload!: FileUpload
+  submitProfileImageLoading = false;
+
 
   constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, private contentService: ContentService, private messageService: MessageService, private router: Router, private confirmationService: ConfirmationService) {
 
@@ -168,7 +179,7 @@ export class ProfileComponent {
             })
           )
           .subscribe((post) => {
-            if(this.posts != null) {
+            if (this.posts != null) {
               this.posts.unshift(post)
               this.posts = [...this.posts]
             } else {
@@ -469,6 +480,71 @@ export class ProfileComponent {
           })
       }
     })
+  }
+
+  profileImageChangeEvent(event: FileSelectEvent) {
+    const file = event.currentFiles[0]
+    if (file) {
+      this.originalProfileImageFile = file;
+    }
+  }
+
+  profileImageCropped(event: ImageCroppedEvent) {
+    if (event.blob != undefined) {
+      this.croppedProfileImage = event.blob
+    }
+  }
+
+  clearProfileImageUpload() {
+    this.originalProfileImageFile = null
+    this.profileImageFileUpload.clear()
+  }
+
+  submitNewProfileImage() {
+    if (this.submitProfileImageLoading || this.userProfile == null || this.croppedProfileImage == null) {
+      return
+    }
+    this.submitProfileImageLoading = true
+
+    let file = new File([this.croppedProfileImage], 'profileImage')
+    this.accountService.changeUserProfileImage(this.userProfile.username, file)
+      .pipe(
+        catchError(err => {
+          showGeneralError(this.messageService, 'An error occured while updating your profile picture! Please try again later.')
+          this.submitProfileImageLoading = false
+          console.error(err);
+          return EMPTY
+        })
+      )
+      .subscribe(_ => {
+        this.submitProfileImageLoading = false
+        this.profileImageChangeDialogVisible = false
+        this.clearProfileImageUpload()
+
+        // Break image cache
+        if (this.userProfile) {
+          if (this.userProfile.profileImageUrl != null) {
+            this.userProfile.profileImageUrl = this.userProfile.profileImageUrl + '?' + new Date().getTime()
+          } else {
+            this.userProfile.profileImageUrl = '/image/user/' + this.userProfile.username
+          }
+
+          for (let post of this.posts ?? []) {
+            if (post.author.profileImageUrl) {
+              post.author.profileImageUrl = post.author.profileImageUrl + '?' + new Date().getTime()
+            } else {
+              post.author.profileImageUrl = '/image/user/' + this.userProfile.username
+            }
+          }
+        }
+
+
+        showGeneralError(this.messageService, 'Profile picture updated!', 'info', '')
+      })
+  }
+
+  deleteCurrentProfileImage() {
+    // TODO:
   }
 }
 

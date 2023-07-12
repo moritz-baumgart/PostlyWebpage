@@ -49,7 +49,6 @@ export class AdminComponent {
     this.databaseService.executeQuery(this.sqlQueryForm.value)
       .pipe(
         catchError((err: HttpErrorResponse) => {
-          debugger
           this.executeBtnLoading = false
           if (err.status == 400) {
             this.errorMsgHeader = 'The server returned the following error(s):'

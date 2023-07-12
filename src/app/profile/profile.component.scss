@@ -22,9 +22,11 @@
     #profileSection {
         height: 50%;
         display: flex;
-        > #userActionButtons {
+
+        >#userActionButtons {
             margin-left: auto;
-            > p-button {
+
+            >p-button {
                 margin-left: 1rem;
             }
         }
@@ -129,5 +131,28 @@
 
     p-button {
         margin-left: 1rem;
+    }
+}
+
+.hoverEdit {
+    position: relative;
+
+    span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+
+        display: none;
+        justify-content: center;
+        align-items: center;
+        
+        border-radius: 6px;
+    }
+
+    &:hover span {
+        display: flex;
     }
 }

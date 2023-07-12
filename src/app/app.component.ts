@@ -11,6 +11,7 @@ import { Role } from 'src/DTOs/role';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { environment } from 'src/environments/environment';
 import { FileUpload } from 'primeng/fileupload';
+import { FileSelectEvent } from 'src/DTOs/fileselectevent';
 
 @Component({
   selector: 'app-root',
@@ -158,10 +159,4 @@ export class AppComponent {
   profilePictureError() {
     this.profilePictureUrl = null
   }
-}
-
-interface FileSelectEvent {
-  originalEvent: Event
-  files: File[]
-  currentFiles: File[]
 }

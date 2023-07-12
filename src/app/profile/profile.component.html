@@ -1,7 +1,11 @@
 <div *ngIf="userProfile" id="profileOverview">
     <div id="profileSection">
-        <p-avatar *ngIf="userProfile.profileImageUrl != null" [style]="{'width': '10rem', 'height': '10rem'}" class="postlyAvatarBorder" [image]="env.apiBase + userProfile.profileImageUrl"></p-avatar>
-        <p-avatar *ngIf="userProfile.profileImageUrl == null" [style]="{'width': '10rem', 'height': '10rem'}" icon="pi pi-user"></p-avatar>
+        <p-avatar *ngIf="userProfile.profileImageUrl != null" [style]="{'width': '10rem', 'height': '10rem'}" class="postlyAvatarBorder hoverEdit" [image]="env.apiBase + userProfile.profileImageUrl">
+            <span *ngIf="isMe" style="background-color: rgba(100, 100, 100, 0.5);" (click)="profileImageChangeDialogVisible = true">Click to edit</span>
+        </p-avatar>
+        <p-avatar *ngIf="userProfile.profileImageUrl == null" [style]="{'width': '10rem', 'height': '10rem'}" class="hoverEdit" icon="pi pi-user">
+            <span *ngIf="isMe" style="background-color: rgba(100, 100, 100, 1);" (click)="profileImageChangeDialogVisible = true">Click to edit</span>
+        </p-avatar>
         <div id="userActionButtons">
             <p-button *ngIf="isMe || (currentUserRoleName == Role[Role.Admin] || currentUserRoleName == Role[Role.Moderator])" (click)="deleteAcc()" [loading]="deleteAccBtnLoading" icon="pi pi-trash" styleClass="p-button-danger"></p-button>
             <p-button *ngIf="!isMe && currentUserRoleName == Role[Role.Admin] && changemodBtnText != null" (click)="changeMod()" [loading]="changemodBtnLoading">{{ changemodBtnText }}</p-button>
@@ -101,10 +105,10 @@
 </p-dialog>
 
 <!-- Following and followers dialogs -->
-<p-dialog header="Following" [modal]="true" [(visible)]="showFollowingDialog" [style]="{ width: '50vw', 'max-height': '50vh' }" [closable]="true">
+<p-dialog header="Following" [modal]="true" [draggable]="false" [(visible)]="showFollowingDialog" [style]="{ width: '50vw', 'max-height': '50vh' }" [closable]="true">
     <app-userlist [users]="followingUser" emptyMessage="Looks really empty in here!" (hideDialog)="hideDialog()"></app-userlist>
 </p-dialog>
-<p-dialog header="Followers" [modal]="true" [(visible)]="showFollowerDialog" [style]="{ width: '50vw', 'max-height': '50vh' }" [closable]="true">
+<p-dialog header="Followers" [modal]="true" [draggable]="false" [(visible)]="showFollowerDialog" [style]="{ width: '50vw', 'max-height': '50vh' }" [closable]="true">
     <app-userlist [users]="followerUser"  emptyMessage="Looks really empty in here!" (hideDialog)="hideDialog()"></app-userlist>
 </p-dialog>
 
@@ -123,6 +127,23 @@
         <button type="button" pButton icon="pi pi-check" class="p-button-danger" label="Delete account" (click)="deleteAccDialog.accept()" [disabled]="deleteBtnDisabled"></button>
     </ng-template>
 </p-confirmDialog>
+
+<!-- profile image change dialog -->
+<p-dialog header="Change profile picture" [(visible)]="profileImageChangeDialogVisible" [modal]="true" [draggable]="false" [style]="{'width': '50vw'}">
+    <div style="margin-bottom: 1rem; display: flex;">
+        <p-fileUpload #profileImageFileUpload mode="basic" class="left-btn" chooseLabel="Upload image" name="demo[]" accept="image/*" styleClass="p-button-sm p-button-info" (onSelect)="profileImageChangeEvent($event)"></p-fileUpload>
+        <p-button *ngIf="originalProfileImageFile == null" label="Delete current image" styleClass="p-button-sm p-button-danger" (click)="deleteCurrentProfileImage()" [ngStyle]="{'margin-left': '1rem'}"></p-button>
+        <p-button *ngIf="originalProfileImageFile != null" icon="pi pi-times" styleClass="p-button-sm p-button-danger" (click)="clearProfileImageUpload()" [ngStyle]="{'margin-left': '1rem'}"></p-button>
+        <p-button *ngIf="croppedProfileImage != null" label="Submit" [loading]="submitProfileImageLoading" styleClass="p-button-sm p-button-success" (click)="submitNewProfileImage()" [ngStyle]="{'margin-left': 'auto', 'margin-right': '1rem'}"></p-button>
+    </div>
+    <image-cropper
+        *ngIf="originalProfileImageFile != null"
+        [imageFile]="originalProfileImageFile"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="1/1"
+        (imageCropped)="profileImageCropped($event)"
+    ></image-cropper>
+</p-dialog>
 
 <!-- p-toast for mounting toasts -->
 <p-toast></p-toast>

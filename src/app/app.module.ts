@@ -42,6 +42,7 @@ import { TableModule } from 'primeng/table';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AvatarModule } from 'primeng/avatar';
 import { FileUploadModule } from 'primeng/fileupload';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 
 export function jwtOptionsFactory(cookieService: CookieService) {
@@ -103,7 +104,8 @@ export function jwtOptionsFactory(cookieService: CookieService) {
     TableModule,
     ConfirmDialogModule,
     AvatarModule,
-    FileUploadModule
+    FileUploadModule,
+    ImageCropperModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
