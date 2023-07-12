@@ -32,6 +32,7 @@ export class ProfileComponent {
   // Make things available in template
   Role = Role
   env = environment
+  Gender = Gender
 
   currentUserRoleName = ''
 

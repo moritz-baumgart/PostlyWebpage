@@ -27,7 +27,7 @@ p-skeleton {
 // Hover effect which changes color to the highlight text color
 .highlighthover {
     transition: color 200ms;
-    
+
     &:hover {
         color: var(--highlight-text-color);
     }

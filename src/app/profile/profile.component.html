@@ -14,12 +14,17 @@
         </div>
     </div>
     <div id="userSummary">
-        <span id="name">{{ userProfile.displayName }}</span>
-        <span class="username">@{{ userProfile.username }} <i *ngIf="userProfile.role == Role.Moderator" class="pi pi-shield username" style="margin-left: 0.5rem;" pTooltip="This user is a moderator."></i></span>
+        <span class="left-stats" *ngIf="userProfile.displayName" id="name">{{ userProfile.displayName }}</span>
+        <div style="display: flex;">
+            <span class="username left-stats">@{{ userProfile.username }} <i *ngIf="userProfile.role == Role.Moderator" class="pi pi-shield username" style="margin-left: 0.5rem;" pTooltip="This user is a moderator."></i></span>
+            <span style="margin-left: auto;">Member since {{ userProfile.createdAt | date:'mediumDate' }}</span>
+        </div>
+        <span class="left-stats" pTooltip="Birthday" *ngIf="userProfile.birthday"><img src="assets/cake.svg" class="custom-icon"> {{ userProfile.birthday | date:'mediumDate' }}</span>
+        <span class="left-stats" pTooltip="Gender" *ngIf="userProfile.gender != null && userProfile.gender != Gender.NoAnswer"><img src="assets/venusmars.svg" class="custom-icon"> {{ Gender[userProfile.gender] }}</span>
         <div id="followerCount">
-            <span class="pointer highlighthover" (click)="showFollowDialog('following')">{{ userProfile.followingCount }} Following</span>
+            <span class="pointer highlighthover left-stats" (click)="showFollowDialog('following')">{{ userProfile.followingCount }} Following</span>
             <span style="margin: 0 0.5rem 0 0.5rem;">|</span>
-            <span class="pointer highlighthover" (click)="showFollowDialog('follower')">{{ userProfile.followerCount }} Followers</span>
+            <span class="pointer highlighthover left-stats" (click)="showFollowDialog('follower')">{{ userProfile.followerCount }} Followers</span>
         </div>
     </div>
 </div>
