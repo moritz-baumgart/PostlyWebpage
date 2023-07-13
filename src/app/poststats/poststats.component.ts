@@ -35,9 +35,9 @@ export class PoststatsComponent {
       this.requestVoteRemove(vote)
     } else {
       if (vote == VoteType.Upvote) {
-        this.requestVote(vote, VoteType.Downvote)
+        this.requestVote(vote, this.post?.vote?? null)
       } else if (vote == VoteType.Downvote) {
-        this.requestVote(vote, VoteType.Upvote)
+        this.requestVote(vote, this.post?.vote?? null)
       }
     }
   }
