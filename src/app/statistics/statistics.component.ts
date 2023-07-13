@@ -189,10 +189,10 @@ export class StatisticsComponent implements AfterViewInit {
   }
 
   download(chartData: ChartData) {
-    let csvContent = 'data:text/csv;charset=utf-8,Date,Amount\n'
+    let csvContent = 'data:text/csv;charset=utf-8,Date;Amount\n'
     let counter = 0
     chartData.labels?.forEach(label => {
-      csvContent += `${label},${chartData.datasets[0].data[counter]}\n`
+      csvContent += `${label};${chartData.datasets[0].data[counter]}\n`
       counter++
     })
     let encodedUri = encodeURI(csvContent);
