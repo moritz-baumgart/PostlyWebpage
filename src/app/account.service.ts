@@ -240,13 +240,11 @@ export class AccountService {
     const formData = new FormData()
     formData.append('image', image)
 
-    return this.http.put(this.apiBase + '/image/user/' + username, formData)
+    return this.http.put<string>(this.apiBase + '/image/user/' + username, formData)
   }
 
   deleteUserProfileImage(username: string) {
-    throw new Error("not Implemented")
-    // TODO:
-    //return this.http.delete(this.apiBase + '/image/user/' + username)
+    return this.http.delete(this.apiBase + '/image/user/' + username)
   }
 }
 

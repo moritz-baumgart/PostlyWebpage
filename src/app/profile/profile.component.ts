@@ -470,13 +470,13 @@ export class ProfileComponent {
         this.accountService.deleteUser(this.userProfile.username, this.isMe)
           .pipe(
             catchError(err => {
-              showGeneralError(this.messageService, "An error occured while deleting this accoung. Please try again later!")
+              showGeneralError(this.messageService, 'An error occured while deleting this accoung. Please try again later!')
               console.error(err);
               return EMPTY
             })
           )
           .subscribe(() => {
-            showGeneralError(this.messageService, "Account deleted!", "info", "")
+            showGeneralError(this.messageService, 'Account deleted!', 'info', '')
             this.router.navigateByUrl('/')
           })
       }
@@ -517,39 +517,49 @@ export class ProfileComponent {
           return EMPTY
         })
       )
-      .subscribe(_ => {
+      .subscribe(newImgUrl => {
         this.submitProfileImageLoading = false
         this.profileImageChangeDialogVisible = false
         this.clearProfileImageUpload()
-
-        // Break image cache
-        if (this.userProfile) {
-          if (this.userProfile.profileImageUrl != null) {
-            this.userProfile.profileImageUrl = this.userProfile.profileImageUrl + '?' + new Date().getTime()
-          } else {
-            this.userProfile.profileImageUrl = '/image/user/' + this.userProfile.username
-          }
-
-          for (let post of this.posts ?? []) {
-            if (post.author.profileImageUrl) {
-              post.author.profileImageUrl = post.author.profileImageUrl + '?' + new Date().getTime()
-            } else {
-              post.author.profileImageUrl = '/image/user/' + this.userProfile.username
-            }
-          }
+        if (this.userProfile) this.userProfile.profileImageUrl = '/' + newImgUrl
+        for (let post of this.posts ?? []) {
+          post.author.profileImageUrl = '/' + newImgUrl
         }
-
-
+        
         showGeneralError(this.messageService, 'Profile picture updated!', 'info', '')
       })
-  }
-
-  deleteCurrentProfileImage() {
-    // TODO:
-  }
-}
-
-interface GenderOption {
+    }
+    
+    deleteCurrentProfileImage() {
+      if(!this.userProfile || this.submitProfileImageLoading) {
+        return
+      }
+      
+      this.submitProfileImageLoading = true
+      
+      this.accountService.deleteUserProfileImage(this.userProfile.username)
+      .pipe(
+        catchError(err => {
+          showGeneralError(this.messageService, 'An error occured while deleting your profile picture! Please try again later.')
+          console.error(err);
+          this.submitProfileImageLoading = false
+          return EMPTY          
+        })
+        )
+        .subscribe(_ => {
+          this.submitProfileImageLoading = false
+          this.profileImageChangeDialogVisible = false
+          this.clearProfileImageUpload()
+          showGeneralError(this.messageService, 'Profile picture removed!', 'info', '')
+          if (this.userProfile) this.userProfile.profileImageUrl = null
+          for (let post of this.posts ?? []) {
+            post.author.profileImageUrl = null
+          }
+        })
+      }
+    }
+    
+    interface GenderOption {
   value: Gender | null,
   name: string
 }
