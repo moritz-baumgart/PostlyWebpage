@@ -73,7 +73,7 @@ export class ContentService {
   }
 
   createComment(postId: number, commentContent: string) {
-    return this.http.post<SuccessResult<any, InteractionError>>(
+    return this.http.post<number>(
       this.apiBase + '/comment',
       JSON.stringify({
         postId,

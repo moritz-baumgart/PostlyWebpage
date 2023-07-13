@@ -146,6 +146,7 @@ export class PostlistComponent {
       .subscribe((res) => {
         this.commentText.setValue('')
         if (this.postDetails) {
+          this.postDetails.post.commentCount = res
           this.loadComments(this.postDetails.post.id)
         }
       })
