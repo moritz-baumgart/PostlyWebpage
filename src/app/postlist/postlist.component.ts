@@ -12,6 +12,14 @@ import { Role } from 'src/DTOs/role';
 import { ClaimTypes } from 'src/DTOs/claimtypes';
 import { environment } from 'src/environments/environment';
 
+/**
+ * This component displays a list of posts. It emits an event when it's load more btn is pressed. It also expects a string to show when the post list is empty and a boolean which indicates if new post are being fetched.
+ * 
+ * @example
+ * ```
+ * <app-postlist [posts]="posts" [nextPageLoadingState]="loadingNextPage" (loadNextPage)="loadMore()" emptyMessage="No posts to show here!"></app-postlist>
+ * ```
+ */
 @Component({
   selector: 'app-postlist',
   templateUrl: './postlist.component.html',
@@ -69,6 +77,10 @@ export class PostlistComponent {
   }
 
 
+  /**
+   * Converts given PostDTO to a PostDetails object which is then displayed in a dialog.
+   * @param post The post to show.
+   */
   showPostDetails(post: PostDTO) {
     this.postDetails = new PostDetails(post, this.datePipe)
     this.commentText.setValue(this.savedCommentTexts[post.id])
@@ -76,7 +88,10 @@ export class PostlistComponent {
     this.loadComments(post.id)
   }
 
-
+  /**
+   * Loads comments for a posts and adds them to the current PostDetails object to display them.
+   * @param postId The id of the post to load the comments for.
+   */
   private loadComments(postId: number) {
     this.contentService.getCommentsForPost(postId)
       .pipe(
@@ -119,7 +134,7 @@ export class PostlistComponent {
 
 
   /**
-   * Called by the comment button, submits the comment
+   * Called by the comment button, submits the comment using the {@link ContentService}.
    */
   comment() {
     if (!this.postDetails) {
@@ -152,10 +167,18 @@ export class PostlistComponent {
       })
   }
 
+  /**
+   * Called when the load more btn is clicked, emits an event to the parent to request more posts from it.
+   */
   requestNextPage() {
     this.loadNextPage.emit()
   }
 
+  /**
+   * Submits a delete request using the {@link ContentService} for the given post id. Displays a confirmation message, which is different depending on the authorUsername.
+   * @param postId To id of the post to delete.
+   * @param authorUsername The author's username of the post to delete.
+   */
   deletePost(event: MouseEvent, postId: number, authorUsername: string) {
     event.stopPropagation() // Prevent propagation so we dont open the post detail view
 
@@ -196,6 +219,9 @@ export class PostlistComponent {
   }
 }
 
+/**
+ * This class contains the details of a post relevant for display. A PostDTO can be used to construct it.
+ */
 class PostDetails {
 
   headerUsername: string;

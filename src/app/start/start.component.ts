@@ -7,6 +7,9 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { showGeneralError } from 'src/utils';
 import { AccountService, JwtToken } from '../account.service';
 
+/**
+ * This component is the start page of the website. It show the recommended/following feed.
+ */
 @Component({
   selector: 'app-start',
   templateUrl: './start.component.html',
@@ -26,6 +29,9 @@ export class StartComponent {
   // The jwt of the current logged in user
   currentUserJwt: JwtToken | null = null
 
+  /**
+   * Fetches the public and private (if logged in) feed and subscribes to the new post observable to be able to update the UI when the user posts something new.
+   */
   constructor(private contentService: ContentService, private messageService: MessageService, accountService: AccountService) {
 
     // Subscribe to jwt updates
@@ -63,7 +69,7 @@ export class StartComponent {
             })
           )
           .subscribe((post) => {
-            if(this.publicPosts != null) {
+            if (this.publicPosts != null) {
               this.publicPosts.unshift(post)
               this.publicPosts = [...this.publicPosts]
             } else {
@@ -86,6 +92,11 @@ export class StartComponent {
       })
   }
 
+  /**
+   * Called by the load more event of the postlist component of the public feed.
+   * Loads more posts by making a request using the {@link ContentService} with the paginationStart being the timestamp of the oldest post in the feed.
+   * Handles errors/dispalys them.
+   */
   loadNextPublicPage() {
     this.loadingNextPublicPage = true
     let oldestPost = this.publicPosts?.at(-1)
@@ -118,6 +129,11 @@ export class StartComponent {
       })
   }
 
+  /**
+ * Called by the load more event of the postlist component of the private feed.
+ * Loads more posts by making a request using the {@link ContentService} with the paginationStart being the timestamp of the oldest post in the feed.
+ * Handles errors/dispalys them.
+ */
   loadNextPrivatePage() {
     if (this.currentUserJwt == null) {
       return

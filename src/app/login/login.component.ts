@@ -7,6 +7,9 @@ import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Error } from 'src/DTOs/error';
 
+/**
+ * This component provides a login interface for the user to log into their account.
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -22,6 +25,9 @@ export class LoginComponent {
 
   constructor(private accountService: AccountService, private activatedRoute: ActivatedRoute, private router: Router, private messageService: MessageService) { }
 
+  /**
+   * Called when the login btn is clicked. Validates input and if no request is already ongoin initiates a login request using the {@link AccountService}.
+   */
   login() {
 
     if (this.loading) {
@@ -92,6 +98,10 @@ export class LoginComponent {
       })
   }
 
+  /**
+   * Disables or enables the inputs based on the loading state.
+   * @param isLoading true = disable, false = enable
+   */
   private setLoading(isLoading: boolean) {
     this.loading = isLoading
     if (isLoading) {

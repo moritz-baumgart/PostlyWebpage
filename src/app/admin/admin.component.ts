@@ -6,6 +6,9 @@ import { DatabaseService } from '../database.service';
 import { EMPTY, catchError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
+/**
+ * This component is the admin dashboard page, which includes the list of moderators and the sql console.
+ */
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -33,6 +36,9 @@ export class AdminComponent {
       })
   }
 
+  /**
+   * Is called when the excute btn is clicked. If no query is already running and the input is not empty it calls the databse service and request execution of the sql query from the input.
+   */
   execute() {
 
     if (this.executeBtnLoading || !this.sqlQueryForm.value) {

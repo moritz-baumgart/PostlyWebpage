@@ -19,6 +19,9 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent }
 ];
 
+/**
+ * This class defines the routes of the SPA. They are defined in the {@link routes} object.
+ */
 @NgModule({
   imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'top' })],
   exports: [RouterModule]

@@ -10,7 +10,7 @@ import { VoteType } from 'src/DTOs/votetype';
 import { environment } from 'src/environments/environment';
 
 /**
- * This service provides methods for fetching content, i.e. feeds, posts, comments, etc.
+ * This service provides methods for fetching, creating and updating content, i.e. feeds, posts, comments, etc.
  */
 @Injectable({
   providedIn: 'root'
@@ -28,6 +28,11 @@ export class ContentService {
   constructor(private http: HttpClient) { }
 
 
+  /**
+   * Fetches the public feed starting from a given timestamp.
+   * @param paginationStart The start timestamp, all post will be older than this
+   * @returns The observable given by the http client containing the request result.
+   */
   getPublicFeed(paginationStart: Date) {
 
     return this.http
@@ -39,7 +44,11 @@ export class ContentService {
   }
 
   /**
-   * Retrieves a page of posts authored by a given user.
+   * Fetches the feed for the profile page of a certain user.
+   * If no user is given it uses the 'me' endpoint.
+   * @param paginationStart The start timestamp, all post will be older than this
+   * @param username The username of the user to fetch the posts for.
+   * @returns The observable given by the http client containing the request result.
    */
   getUserFeed(paginationStart: Date, username?: string) {
 
@@ -58,6 +67,11 @@ export class ContentService {
       })
   }
 
+  /**
+   * Fetches the private feed starting from a given timestamp.
+   * @param paginationStart The start timestamp, all post will be older than this
+   * @returns The observable given by the http client containing the request result.
+   */
   getPrivateFeed(paginationStart: Date) {
 
     return this.http
@@ -68,10 +82,21 @@ export class ContentService {
       })
   }
 
+  /**
+   * Fetches the comments of a post with given id.
+   * @param postId The id of the post to fetch the comments for.
+   * @returns The observable given by the http client containing the request result.
+   */
   getCommentsForPost(postId: number) {
     return this.http.get<CommentDTO[]>(this.apiBase + '/post/' + postId + '/comments')
   }
 
+  /**
+   * Makes a request to create a new comment on post with given id.
+   * @param postId The id of the post to create the comment on.
+   * @param commentContent The string content of the comment.
+   * @returns The observable given by the http client containing the request result.
+   */
   createComment(postId: number, commentContent: string) {
     return this.http.post<number>(
       this.apiBase + '/comment',
@@ -88,6 +113,7 @@ export class ContentService {
   /**
    * Tries to create a new post with given content.
    * @param content The text content of the post
+   * @returns The observable given by the http client containing the request result.
    */
   createPost(content: string) {
     return this.http.post<number>(
@@ -101,6 +127,13 @@ export class ContentService {
     )
   }
 
+  /**
+   * Makes a request to add an image to a post.
+   * This method can be called after {@link createPost} to make an image post out of a normal one.
+   * @param postId The id of the post to add the image to.
+   * @param image The image file to add to the post.
+   * @returns The observable given by the http client containing the request result.
+   */
   addImageToPost(postId: number, image: File) {
     const formData = new FormData()
     formData.append('image', image)
@@ -109,7 +142,8 @@ export class ContentService {
   }
 
   /**
-   * Provides an observable that is triggered when a new post was created by the client which contains the id of that new post.
+   *  Provides an observable that is triggered when a new post was created by the client which contains the id of that new post.
+   * @returns The described observable.
    */
   getNewPostObservable() {
     return this.newPostCreatedSubject.asObservable()
@@ -117,6 +151,8 @@ export class ContentService {
 
   /**
    * Tries to retrieve a post with given post id.
+   * @param postId The id of the post to retrieve,
+   * @returns The observable given by the http client containing the request result.
    */
   retrievePost(postId: number) {
     return this.http.get<PostDTO>(
@@ -124,6 +160,12 @@ export class ContentService {
     )
   }
 
+  /**
+   * Makes a request to add a vote on a post with given id.
+   * @param postId The id of the post to add the vote on.
+   * @param vote The type of vote to be added.
+   * @returns The observable given by the http client containing the request result.
+   */
   setVote(postId: number, vote: VoteType) {
     return this.http.post<VoteUpdateViewModel>(
       this.apiBase + '/post/' + postId + '/vote',
@@ -136,12 +178,22 @@ export class ContentService {
     )
   }
 
+  /**
+   * Makes a request to remove a vote on a post with given id.
+   * @param postId The id of the post to remove the vote for.
+   * @returns The observable given by the http client containing the request result.
+   */
   removeVote(postId: number) {
     return this.http.delete<VoteUpdateViewModel>(
       this.apiBase + '/post/' + postId + '/vote'
     )
   }
 
+  /**
+   * Makes a request to delete a post with given id.
+   * @param postId The id of the post to delete.
+   * @returns The observable given by the http client containing the request result.
+   */
   deletePost(postId: number) {
     return this.http.delete(
       this.apiBase + '/post/' + postId

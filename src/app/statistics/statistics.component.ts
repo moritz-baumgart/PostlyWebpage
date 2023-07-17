@@ -3,6 +3,9 @@ import { StatisticsService } from '../statistics.service';
 import { ChartData } from 'chart.js';
 import { UIChart } from 'primeng/chart';
 
+/**
+ * This component shows the statistics page, which can be seen by moderators and admins.
+ */
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
@@ -17,6 +20,9 @@ export class StatisticsComponent implements AfterViewInit {
   totalComments: number | null = null;
   readonly documentStyle = getComputedStyle(document.documentElement);
 
+  /** 
+   * Get the pie chart element and init it's {@link ChartData} object. 
+   * */
   @ViewChild('genderPieChart', { static: false }) genderPieChart!: UIChart
   genderPieData: ChartData = {
     labels: [],
@@ -29,6 +35,7 @@ export class StatisticsComponent implements AfterViewInit {
     ]
   }
 
+  // The configuration for the pie chart.
   genderPieOptions = {
     cutout: '60%',
     animation: false,
@@ -42,6 +49,7 @@ export class StatisticsComponent implements AfterViewInit {
     }
   }
 
+  /**  Get the per day chart elements and init their {@link ChartData} objects.  */
   @ViewChildren('perDayChart') perDayChartElements!: QueryList<UIChart>
   perDayCharts: PerDayChart[] = [
     {
@@ -70,7 +78,7 @@ export class StatisticsComponent implements AfterViewInit {
     }
   ]
 
-
+  // The configuration used by the linecharts.
   linechartOptions = {
     plugins: {
       legend: {
@@ -101,7 +109,9 @@ export class StatisticsComponent implements AfterViewInit {
     }
   };
 
-
+  /**
+   * Fetches the 'number only' statistics using the {@link StatisticsService}.
+   */
   constructor(private stats: StatisticsService) {
     stats.getTotalUsers()
       .subscribe(val => {
@@ -126,6 +136,10 @@ export class StatisticsComponent implements AfterViewInit {
 
   }
 
+  /**
+   * Because we need access to the chart elements we only do that in this lifecyle method, since it is called after the elements are initalized.
+   * It fetches the data for all the charts and fills their data objects with the results.
+   */
   ngAfterViewInit() {
     this.stats.getGenderDistribution()
       .subscribe(res => {
@@ -151,7 +165,12 @@ export class StatisticsComponent implements AfterViewInit {
     }
   }
 
-  getTodayStat(val: { [datetimeString: string]: number }) {
+  /**
+   * Gets the datapoint for today from a list of datapoints and returns it's value.
+   * @param val The list of datapoints.
+   * @returns The value for todays day or 0 if there is none.
+   */
+  private getTodayStat(val: { [datetimeString: string]: number }) {
     let mostRecent = Object.keys(val).at(-1)
     if (!mostRecent) {
       return 0
@@ -164,18 +183,33 @@ export class StatisticsComponent implements AfterViewInit {
     }
   }
 
-  compareWithToday(dateString: string) {
+  /**
+   * Compares a given datestring with todays date. Used by {@link getTodayStat}.
+   * @param dateString The datestring to compare with.
+   * @returns True if the date strings day is todays day, false otherwise.
+   */
+  private compareWithToday(dateString: string) {
     let date = new Date(dateString)
     let utcDate = this.getUTCMidnightDate(date)
     let utcToday = this.getUTCMidnightDate(new Date())
     return utcDate.valueOf() === utcToday.valueOf()
   }
 
-  getUTCMidnightDate(date: Date) {
+  /**
+   * Helper method to get a {@link Date} from a given {@link Date} but with the time of the day being midnight. Used by {@link compareWithToday}.
+   * @param date The {@link Date} to convert.
+   * @returns The converted {@link Date} with time being midnight.
+   */
+  private getUTCMidnightDate(date: Date) {
     return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
   }
 
-  initChartDate(label: string) {
+  /**
+   * Initialized a new empty {@link ChartData} object.
+   * @param label The label to assign for the dataset.
+   * @returns The empty {@link ChartData} object.
+   */
+  private initChartDate(label: string) {
     let chartDate: ChartData = {
       labels: [],
       datasets: [
@@ -188,6 +222,10 @@ export class StatisticsComponent implements AfterViewInit {
     return chartDate
   }
 
+  /**
+   * Converts the dataset of {@link ChartData} into a csv file and downloads it.
+   * @param chartData The {@link ChartData} to get the dataset from.
+   */
   download(chartData: ChartData) {
     let csvContent = 'data:text/csv;charset=utf-8,Date;Amount\n'
     let counter = 0
@@ -207,6 +245,10 @@ export class StatisticsComponent implements AfterViewInit {
   }
 }
 
+/**
+ * Interface to define the structure of the list of per day charts. 
+ * his is done to ensure everyone gives the objects in the list the expected attributes, otherwise there might be display errors.
+ */
 interface PerDayChart {
   ref: string
   chartData: ChartData,

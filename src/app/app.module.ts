@@ -45,6 +45,12 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { ImageCropperModule } from 'ngx-image-cropper';
 
 
+/**
+ * This function generates another function which returns the current jwt when called.
+ * This is used by the {@link JwtModule} to inject the token into the headers of every request of the http client.
+ * @param cookieService An instance of the {@link CookieService}.
+ * @returns A functin that returns the current jwt from the cookies when called.
+ */
 export function jwtOptionsFactory(cookieService: CookieService) {
   return {
     tokenGetter: () => {
@@ -54,7 +60,9 @@ export function jwtOptionsFactory(cookieService: CookieService) {
   }
 }
 
-
+/**
+ * This class is the root module of the application. It defines global declarations, imports, etc.
+ */
 @NgModule({
   declarations: [
     AppComponent,

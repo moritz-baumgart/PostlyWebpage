@@ -21,6 +21,9 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { FileSelectEvent } from 'src/DTOs/fileselectevent';
 import { FileUpload } from 'primeng/fileupload';
 
+/**
+ * This component shows the profile of a user. A username can be given as query parameter when routing to this component. If none is given it shows the currently logged in user.
+ */
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -102,7 +105,9 @@ export class ProfileComponent {
   @ViewChild('profileImageFileUpload') profileImageFileUpload!: FileUpload
   submitProfileImageLoading = false;
 
-
+  /**
+   * Fetches the username from the query parameter and loads the users profile. If there is none or if it equal to the current logged in user it marks that in the {@link isMe} attribute, which reflects in slight UI changes.
+   */
   constructor(activatedRoute: ActivatedRoute, private accountService: AccountService, private contentService: ContentService, private messageService: MessageService, private router: Router, private confirmationService: ConfirmationService) {
 
     // Subscribe to jwt changes
@@ -196,6 +201,10 @@ export class ProfileComponent {
 
   }
 
+  /**
+   * Takes a {@link UserDataViewModel} an processes it to be shown by the UI.
+   * @param data The {@link UserDataViewModel} to show.
+   */
   setUserDate(data: UserDataViewModel) {
     this.settingsModel = { ...data }
     // primeng calendar somehow does not like our dates so we have to do this hack here:
@@ -204,6 +213,9 @@ export class ProfileComponent {
     this.userData = data
   }
 
+  /**
+   * Is called when the discard btn inside the profile edit dialog is clicked. Reverts the inputs to their original values and closes the dialog.
+   */
   discard(e: Event) {
     if (this.saveBtnLoading.value) {
       return
@@ -217,6 +229,9 @@ export class ProfileComponent {
     if (this.userData) this.setUserDate(this.userData)
   }
 
+  /**
+   * Submits the changed user data using the {@link AccountService}, if no request is already ongoing. Handles erros and displays error messages accordingly.
+   */
   save() {
     if (this.saveBtnLoading.value) {
       return
@@ -334,6 +349,9 @@ export class ProfileComponent {
 
   }
 
+  /**
+   * Called by the follow button a profile. If no request is already ongoin it submits a new one to follow or unfollow the user, depending on the following state. Uses the {@link AccountService} to do so.
+   */
   follow() {
     if (this.followBtnLoading) {
       return
@@ -361,6 +379,10 @@ export class ProfileComponent {
       })
   }
 
+  /**
+   * Sets the text of the follow btn dependign on the following state for a given {@link UserProfileViewModel}.
+   * @param userViewModel The {@link UserProfileViewModel} to get the following state from.
+   */
   setFollowBtnText(userViewModel: UserProfileViewModel) {
     if (userViewModel.follow == null) {
       this.followBtnText = null
@@ -371,6 +393,10 @@ export class ProfileComponent {
     }
   }
 
+  /**
+   * Sets the text of the change mod btn dependign on the role a given {@link UserProfileViewModel}.
+   * @param userViewModel The {@link UserProfileViewModel} to get the role from.
+   */
   setChangeModBtnText(userViewModel: UserProfileViewModel) {
     if (userViewModel.role == Role.Moderator) {
       this.changemodBtnText = 'Demote'
@@ -379,6 +405,10 @@ export class ProfileComponent {
     }
   }
 
+  /**
+   * Opens up the dialog which shows the followers of a user or the users that the user follows.
+   * @param type Whether it should show the follower or the following dialog.
+   */
   showFollowDialog(type: 'follower' | 'following') {
     if (type == 'following') {
       this.showFollowingDialog = true
@@ -395,11 +425,17 @@ export class ProfileComponent {
     }
   }
 
+  /**
+   * Closes the follower/following dialog opened by {@link showFollowDialog}
+   */
   hideDialog() {
     this.showFollowerDialog = false
     this.showFollowingDialog = false
   }
 
+  /**
+   * Makes a request to promote/demote the user depending on their current role using the {@link doRoleUpdate} method.
+   */
   changeMod() {
     if (this.changemodBtnLoading) {
       return
@@ -411,6 +447,11 @@ export class ProfileComponent {
     }
   }
 
+  /**
+   * Performs a role update request using the {@link AccountService} to update the role of a given user.
+   * @param username The username of the user to perform the update on.
+   * @param role The role to set for the given user.
+   */
   private doRoleUpdate(username: string, role: Role) {
     this.changemodBtnLoading = true
     this.accountService.updateUserRole(username, role)
@@ -429,6 +470,9 @@ export class ProfileComponent {
       })
   }
 
+  /**
+   * Is called by the event of the postlist component when it request more posts. Tries to load more posts using the {@link ContentService} and handles errors/dispalys error messages.
+   */
   loadMore() {
     this.loadingNextPage = true
     let oldestPost = this.posts?.at(-1)
@@ -460,6 +504,9 @@ export class ProfileComponent {
       })
   }
 
+  /**
+   * Called when the account delete btn is clicked. Opens the account delete confirm dialog and sends a delete request using the {@link AccountService} when the user accepts it.
+   */
   deleteAcc() {
     this.confirmationService.confirm({
       key: 'deleteAccConfirm',
@@ -483,6 +530,9 @@ export class ProfileComponent {
     })
   }
 
+  /**
+   * Called when the user selects a new image for their profile. Updates the file to be used by the image cropper.
+   */
   profileImageChangeEvent(event: FileSelectEvent) {
     const file = event.currentFiles[0]
     if (file) {
@@ -490,17 +540,26 @@ export class ProfileComponent {
     }
   }
 
+  /**
+   * Called everytime the user releases the leftclick when cropping the image. Saves the current crop result to be later send to the server.
+   */
   profileImageCropped(event: ImageCroppedEvent) {
     if (event.blob != undefined) {
       this.croppedProfileImage = event.blob
     }
   }
 
+  /**
+   * Called by the clear button to remove the currently select image from the image picker.
+   */
   clearProfileImageUpload() {
     this.originalProfileImageFile = null
     this.profileImageFileUpload.clear()
   }
 
+  /**
+   * Submits the file saved by the {@link profileImageCropped} method to the server, if no request is already ongoing using the {@link AccountService}. Handles errors and displays them.
+   */
   submitNewProfileImage() {
     if (this.submitProfileImageLoading || this.userProfile == null || this.croppedProfileImage == null) {
       return
@@ -525,41 +584,47 @@ export class ProfileComponent {
         for (let post of this.posts ?? []) {
           post.author.profileImageUrl = '/' + newImgUrl
         }
-        
+
         showGeneralError(this.messageService, 'Profile picture updated!', 'info', '')
       })
+  }
+
+  /**
+   * Called when the profile image delete btn is clicked. If no request is ongoing it makes one to delete the profile picture using the {@link AccountService}. Handles errors and displays them.
+   */
+  deleteCurrentProfileImage() {
+    if (!this.userProfile || this.submitProfileImageLoading) {
+      return
     }
-    
-    deleteCurrentProfileImage() {
-      if(!this.userProfile || this.submitProfileImageLoading) {
-        return
-      }
-      
-      this.submitProfileImageLoading = true
-      
-      this.accountService.deleteUserProfileImage(this.userProfile.username)
+
+    this.submitProfileImageLoading = true
+
+    this.accountService.deleteUserProfileImage(this.userProfile.username)
       .pipe(
         catchError(err => {
           showGeneralError(this.messageService, 'An error occured while deleting your profile picture! Please try again later.')
           console.error(err);
           this.submitProfileImageLoading = false
-          return EMPTY          
+          return EMPTY
         })
-        )
-        .subscribe(_ => {
-          this.submitProfileImageLoading = false
-          this.profileImageChangeDialogVisible = false
-          this.clearProfileImageUpload()
-          showGeneralError(this.messageService, 'Profile picture removed!', 'info', '')
-          if (this.userProfile) this.userProfile.profileImageUrl = null
-          for (let post of this.posts ?? []) {
-            post.author.profileImageUrl = null
-          }
-        })
-      }
-    }
-    
-    interface GenderOption {
+      )
+      .subscribe(_ => {
+        this.submitProfileImageLoading = false
+        this.profileImageChangeDialogVisible = false
+        this.clearProfileImageUpload()
+        showGeneralError(this.messageService, 'Profile picture removed!', 'info', '')
+        if (this.userProfile) this.userProfile.profileImageUrl = null
+        for (let post of this.posts ?? []) {
+          post.author.profileImageUrl = null
+        }
+      })
+  }
+}
+
+/**
+ * Maps the {@link Gender} enum to a string representation. Used as options for the dropdown.
+ */
+interface GenderOption {
   value: Gender | null,
   name: string
 }

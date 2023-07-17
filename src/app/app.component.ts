@@ -13,6 +13,10 @@ import { environment } from 'src/environments/environment';
 import { FileUpload } from 'primeng/fileupload';
 import { FileSelectEvent } from 'src/DTOs/fileselectevent';
 
+/**
+ * This is the main component of the application.
+ * It contains the header with the search bar and navigation and a router-outlet to show all other routes.
+ */
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -46,6 +50,9 @@ export class AppComponent {
   // Jwt of the current user
   currentUserJwt: JwtToken | null | undefined
 
+  /**
+   * An initial refresh of the jwt subject is done and if the user is logged in their username, role and image is set in the UI.
+   */
   constructor(private router: Router, private accountService: AccountService, private confirmationService: ConfirmationService, private contentService: ContentService, private messageService: MessageService) {
 
     // Listen to router events so we can see the current route inside the component.
@@ -73,11 +80,17 @@ export class AppComponent {
       })
   }
 
+  /**
+   * Called by the logout btn. Makes a logout request using the {@link AccountService}.
+   */
   logout() {
     this.accountService.logout('/')
     this.userOverlayPanel.hide()
   }
 
+  /**
+   * Resets the new post dialog and closes it.
+   */
   discardPost(event: Event) {
     this.confirmationService.confirm({
       target: event.target!,
@@ -89,6 +102,10 @@ export class AppComponent {
     })
   }
 
+  /**
+   * Called by the post btn inside the new post dialog.
+   * Validates input and makes the needes request to create a new post using the {@link ContentService} and handles error response.
+   */
   createNewPost() {
 
     if (!this.newPostText.valid) {
@@ -130,6 +147,10 @@ export class AppComponent {
       })
   }
 
+  /**
+   * Private helper method called by {@link createNewPost} to handle when the new post was successfully created.
+   * @param postId The id of the newly created post.
+   */
   private handlePostCreated(postId: number) {
     this.contentService.newPostCreatedSubject.next(postId)
     this.newPostDialogVisible = false
@@ -138,6 +159,9 @@ export class AppComponent {
     showGeneralError(this.messageService, 'Post created!', 'success', '')
   }
 
+  /**
+   * Called by the file selector component, updates the file to be used later when posting/uploading.
+   */
   onFileSelect(event: FileSelectEvent) {
     const file = event.currentFiles[0]
     if (file) {
@@ -145,17 +169,28 @@ export class AppComponent {
     }
   }
 
+  /**
+   * Clears the file selector and the temporary saved file.
+   */
   clearFile() {
     this.fileToUpload = null
     this.postFileUpload.clear()
   }
 
+  /**
+   * Called when the search btn is clicked.
+   * If the search query is not empty it redirects to the search component with respective search parameters.
+   */
   search() {
     if (this.searchQuery.value.length > 0) {
       this.router.navigateByUrl('/s?q=' + this.searchQuery.value)
     }
   }
 
+  /**
+   * Called when the avatar component encounters an error while loading the profile picture.
+   * It sets the url to null so the UI shows a fallback icon instead.
+   */
   profilePictureError() {
     this.profilePictureUrl = null
   }

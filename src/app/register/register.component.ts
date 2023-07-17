@@ -9,6 +9,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Error } from 'src/DTOs/error';
 import { showGeneralError } from 'src/utils';
 
+/**
+ * This component provides the register interface for the user.
+ */
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -26,6 +29,9 @@ export class RegisterComponent {
 
   constructor(private messageService: MessageService, private accountService: AccountService, private activatedRoute: ActivatedRoute, private router: Router) { }
 
+  /**
+   * Makes a register request if none is already ongoing and the input is valid.
+   */
   register() {
     if (this.loading) {
       return
@@ -74,7 +80,10 @@ export class RegisterComponent {
       })
   }
 
-
+  /**
+   * Disabled or enables the UI when a request is loading/is done loading.
+   * @param isLoading The loading state.
+   */
   private setLoading(isLoading: boolean) {
     this.loading = isLoading
     if (isLoading) {
